@@ -16,17 +16,17 @@ const styles = StyleSheet.create({
     height: THUMB_RADIUS_LOW * 2,
     borderRadius: THUMB_RADIUS_LOW,
     borderWidth: 2,
-    borderColor: '#CC002F',
-    backgroundColor: '#CC002F',
+    borderColor: 'rgba(2,142,0,255)',
+    backgroundColor: 'rgba(2,142,0,255)',
   },
-  // rootHigh: {
-  //   width: THUMB_RADIUS_HIGH * 2,
-  //   height: THUMB_RADIUS_HIGH * 2,
-  //   borderRadius: THUMB_RADIUS_HIGH,
-  //   borderWidth: 2,
-  //   borderColor: '#ECBEC8',
-  //   backgroundColor: '#fff',
-  // },
+  rootHigh: {
+    width: THUMB_RADIUS_HIGH * 2,
+    height: THUMB_RADIUS_HIGH * 2,
+    borderRadius: THUMB_RADIUS_HIGH,
+    borderWidth: 2,
+    borderColor: 'rgba(2,142,0,255)',
+    backgroundColor: 'rgba(2,142,0,255)',
+  },
 });
 
 export default memo(Thumb);

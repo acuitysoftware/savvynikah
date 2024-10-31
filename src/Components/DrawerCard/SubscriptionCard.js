@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { moderateScale } from '../../Constants/PixelRatio';
 import { useTheme } from 'react-native-basic-elements';
 import { FONTS } from '../../Constants/Fonts';
 
 const SubscriptionCard = ({ item, index, onSelect, selectedPlan }) => {
     const colors = useTheme();
-    const isSelected = selectedPlan === index;
+    const isSelected = selectedPlan === item;
 
     return (
-        <Pressable 
-            key={index} 
+        <Pressable
+            key={index}
             style={{
                 ...styles.container,
-                borderColor:  colors.second_txt,
+                borderColor: colors.second_txt,
                 backgroundColor: isSelected ? '#E6F3E6' : '#fff'
             }}
-            onPress={() => onSelect(index)}
+            onPress={() => onSelect(item)}
         >
             <View style={styles.main_view}>
-                <Text style={{ ...styles.mounth_txt, color: colors.buttonColor }}>{item.plan_time}</Text>
+                <Text style={{ ...styles.mounth_txt, color: colors.buttonColor }}>{item.name}</Text>
                 <Text style={{ ...styles.price_txt, color: colors.light_txt }}>₹{item.price}</Text>
             </View>
-            {item.status && (
-                <View style={{ ...styles.active_view, backgroundColor: colors.second_txt }}>
-                    <Text style={{ ...styles.active_txt, color: colors.primaryFontColor }}>Active</Text>
-                </View>
+            {item.is_best_value == 1 && (
+                <Image source={require('../../assets/images/crown.png')} style={styles.crowm_img} />
             )}
         </Pressable>
     );
@@ -60,6 +58,11 @@ const styles = StyleSheet.create({
     price_txt: {
         fontFamily: FONTS.Inter.bold,
         fontSize: moderateScale(13)
+    },
+    crowm_img: {
+        height: moderateScale(20),
+        width: moderateScale(20),
+        resizeMode: 'contain'
     }
 });
 

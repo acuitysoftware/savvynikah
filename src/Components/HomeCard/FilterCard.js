@@ -1,5 +1,5 @@
 // Import libraries
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Icon, RadioButton, useTheme } from 'react-native-basic-elements';
 import { moderateScale } from '../../Constants/PixelRatio';
@@ -10,98 +10,236 @@ import AgeRail from '../AgeSlider/AgeRail';
 import AgeRailSelected from '../AgeSlider/AgeRailSelected';
 import AgeLabel from '../AgeSlider/AgeLabel';
 import AgeNotch from '../AgeSlider/AgeNotch';
+import RangeSlider from '../../ui/RangeSlider';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import HomeService from '../../Services/HomeServises';
 
 // Create a component
-const FilterCard = ({ setModalVisible }) => {
+const FilterCardddd = ({ setModalVisible }) => {
     const colors = useTheme();
+    const MIN_DEFAULT_AGE = 18;
+    const MAX_DEFAULT_AGE = 70;
+    const [minValue, setMinValue] = useState(MIN_DEFAULT_AGE);
+    const [maxValue, setMaxValue] = useState(MAX_DEFAULT_AGE);
+
+    const MIN_DEFAULT_HEIGHT = 122;
+    const MAX_DEFAULT_HEIGHT = 240;
+    const [minValueHeight, setMinValueHeight] = useState(MIN_DEFAULT_HEIGHT);
+    const [maxValueHeight, setMaxValueHeight] = useState(MAX_DEFAULT_HEIGHT);
+
     const [selectedCaste, setSelectedCaste] = useState(null);
-    const [sliderValues, setSliderValues] = useState({ min: 18, max: 100 });
-    const [rangeDisabled, setRangeDisabled] = useState(false);
-    const [low, setLow] = useState(18);
-    const [high, setHigh] = useState(100);
-    const [min, setMin] = useState(18);
-    const [max, setMax] = useState(100);
-    const [floatingLabel, setFloatingLabel] = useState(false);
 
-    const renderThumb = useCallback(() => <AgeThumb />, []);
-    const renderRail = useCallback(() => <AgeRail />, []);
-    const renderRailSelected = useCallback(() => <AgeRailSelected />, []);
-    const renderLabel = useCallback(value => <AgeLabel text={value} />, []);
-    const renderNotch = useCallback(() => <AgeNotch />, []);
+    const matritalStatus = ['Not Marriage', '1st Marriage', '2nd Marriage', '3rd Marriage'];
+    const education = ['MBBA', 'BCA', 'BA', 'MTECH'];
+    const ocupation = ['Teacher', 'Doctor', 'Engineer', 'Business'];
 
-    const handleValueChange = useCallback((lowValue, highValue) => {
-        setLow(lowValue);
-        setHigh(highValue);
-    }, []);
+    function toFeet(n) {
+        var realFeet = (n * 0.3937) / 12;
+        var feet = Math.floor(realFeet);
+        var inches = Math.round((realFeet - feet) * 12);
+        return feet + 'ft-' + inches + 'inch';
+      }
+      const [castData, setCastData] = useState([
+        {
+          id: 1,
+          name: 'General'
+        },
+        {
+          id: 2,
+          name: 'SC'
+        },
+        {
+          id: 2,
+          name: 'ST'
+        },
+        {
+          id: 4,
+          name: 'OBC'
+        },
+      ])
 
-    const toggleRangeEnabled = useCallback(
-        () => setRangeDisabled(!rangeDisabled),
-        [rangeDisabled]
-    );
+      const [Ocupationdata, setOcupationData] = useState([])
+      const [OcupationId, setOcupationId] = useState(null);
+    
+      console.log('OcupationIdOcupationIdOcupationIdOcupationId', OcupationId);
+    
+      useEffect(()=>{
+        getOcupationData()
+      },[])
+    
+      const getOcupationData = () => {
+        HomeService.getOccupationList()
+          .then((res) => {
+            if (res && res.status == true) {
+              setOcupationData(res.data)
+            }
+          })
+          .catch((err) => {
+            console.log('secterr', err);
+    
+          })
+      }
+    
+      const handleSelectOcupation = (item) => {
+        setOcupationId(item.id);
+      };
 
-    const setMinTo50 = useCallback(() => setMin(50), []);
-    const setMinTo0 = useCallback(() => setMin(0), []);
-    const setMaxTo100 = useCallback(() => setMax(100), []);
-    const setMaxTo500 = useCallback(() => setMax(500), []);
-    const toggleFloatingLabel = useCallback(
-        () => setFloatingLabel(!floatingLabel),
-        [floatingLabel]
-    );
+      const [StatusData, setStatusData] = useState([])
+      const [StatusId, setStatusId] = useState(null);
+    
+
+      useEffect(()=>{
+        getStatusData()
+      },[])
+    
+      const getStatusData = () => {
+        HomeService.getStatusList()
+          .then((res) => {
+            // console.log('ressectorrrrrrrrrrrrrr====================', res);
+            if (res && res.status == true) {
+              setStatusData(res.data)
+            }
+          })
+          .catch((err) => {
+            console.log('secterr', err);
+    
+          })
+      }
+    
+      const handleSelectStatus = (item) => {
+        setStatusId(item.id);
+      };
+
+      const [Educationdata, setEducationData] = useState([])
+      const [educationId, setEducatonId] = useState(null);
+    
+      useEffect(()=>{
+        getEducationData()
+      },[])
+    
+    
+      const getEducationData = () => {
+        HomeService.getEducationList()
+          .then((res) => {
+            // console.log('ressectorrrrrrrrrrrrrr====================', res);
+            if (res && res.status == true) {
+              setEducationData(res.data)
+            }
+          })
+          .catch((err) => {
+            console.log('secterr', err);
+    
+          })
+      }
+    
+      const handleSelectEducation = (item) => {
+        setEducatonId(item.id);
+      };
+
+
+
     return (
-        <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-               
-                <View style={styles.caste_view}>
-                    <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Age</Text>
-                    <Text style={{ ...styles.agerange_txt, color: colors.primaryFontColor }}>18Years</Text>
-                </View>
-                <View style={styles.sliderContainer}>
-                    <Slider
-                        lider
-                        style={styles.slider}
-                        min={min}
-                        max={max}
-                        low={low}
-                        high={high}
-                        step={1}
-                        disableRange={rangeDisabled}
-                        floatingLabel={floatingLabel}
-                        renderThumb={renderThumb}
-                        renderRail={renderRail}
-                        renderRailSelected={renderRailSelected}
-                        renderLabel={renderLabel}
-                        renderNotch={renderNotch}
-                        onValueChanged={handleValueChange}
-                    />
-                </View>
-                <View style={styles.caste_view}>
-                    <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Height</Text>
-                    <Text style={{ ...styles.agerange_txt, color: colors.primaryFontColor }}>185 cm</Text>
-                </View>
-                <View style={styles.sliderContainer}>
-                    <Slider
-                        lider
-                        style={styles.slider}
-                        min={min}
-                        max={max}
-                        low={low}
-                        high={high}
-                        step={1}
-                        disableRange={rangeDisabled}
-                        floatingLabel={floatingLabel}
-                        renderThumb={renderThumb}
-                        renderRail={renderRail}
-                        renderRailSelected={renderRailSelected}
-                        renderLabel={renderLabel}
-                        renderNotch={renderNotch}
-                        onValueChanged={handleValueChange}
-                    />
-                </View>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.caste_view}>
+                        <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Cast</Text>
+                    </View>
+                    {castData.map((caste, index) => (
+                        <View style={styles.caste_list_view} key={index}>
+                            <RadioButton
+                                selected={selectedCaste === caste}
+                                onChange={() => setSelectedCaste(caste)}
+                                size={18}
+                                containerStyle={{ borderWidth: 1 }}
+                                activeColor={colors.primaryFontColor}
+                            />
+                            <Text style={{ ...styles.caste_title, color: colors.primaryFontColor }}>{caste.name}</Text>
+                        </View>
+                    ))}
+                    <View style={styles.caste_view}>
+                        <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Age</Text>
+                        <Text style={{ ...styles.agerange_txt, color: colors.primaryFontColor }}>({minValue})-({maxValue})Years</Text>
+                    </View>
+                    <View style={styles.sliderContainer}>
+                        <RangeSlider
+                            sliderWidth={260}
+                            min={MIN_DEFAULT_AGE}
+                            max={MAX_DEFAULT_AGE}
+                            step={1}
+                            onValueChange={(range) => {
+                                setMinValue(range.min);
+                                setMaxValue(range.max);
+                            }}
+                        />
+                    </View>
+                    <View style={styles.caste_view}>
+                        <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Height</Text>
+                        <Text style={{ ...styles.agerange_txt, color: colors.primaryFontColor }}>({toFeet(minValueHeight)})-({toFeet(maxValueHeight)})</Text>
+                    </View>
+                    <View style={styles.sliderContainer}>
+                        <RangeSlider
+                            sliderWidth={260}
+                            min={MIN_DEFAULT_HEIGHT}
+                            max={MAX_DEFAULT_HEIGHT}
+                            step={1}
+                            onValueChange={(range) => {
+                                setMinValueHeight(range.min);
+                                setMaxValueHeight(range.max);
+                            }}
+                        />
+                    </View>
 
-              
+                    <View style={styles.caste_view}>
+                        <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Matrital Status</Text>
+                    </View>
+                    {StatusData.map((item, index) => (
+                        <View style={styles.caste_list_view} key={index}>
+                            <RadioButton
+                                selected={selectedCaste === item.id}
+                                onChange={() => setSelectedCaste(item.id)}
+                                size={18}
+                                containerStyle={{ borderWidth: 1 }}
+                                activeColor={colors.primaryFontColor}
+                            />
+                            <Text style={{ ...styles.caste_title, color: colors.primaryFontColor }}>{item.name}</Text>
+                        </View>
+                    ))}
 
-            </ScrollView>
-        </View>
+                    <View style={styles.caste_view}>
+                        <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Education</Text>
+                    </View>
+                    {Educationdata.map((item, index) => (
+                        <View style={styles.caste_list_view} key={index}>
+                            <RadioButton
+                                selected={selectedCaste === item.id}
+                                onChange={() => setSelectedCaste(item.id)}
+                                size={18}
+                                containerStyle={{ borderWidth: 1 }}
+                                activeColor={colors.primaryFontColor}
+                            />
+                            <Text style={{ ...styles.caste_title, color: colors.primaryFontColor }}>{item.name}</Text>
+                        </View>
+                    ))}
+
+                    <View style={styles.caste_view}>
+                        <Text style={{ ...styles.caste_txt, color: colors.primaryFontColor }}>Ocupation</Text>
+                    </View>
+                    {Ocupationdata.map((item, index) => (
+                        <View style={styles.caste_list_view} key={index}>
+                            <RadioButton
+                                selected={selectedCaste === item.id}
+                                onChange={() => setSelectedCaste(item.id)}
+                                size={18}
+                                containerStyle={{ borderWidth: 1 }}
+                                activeColor={colors.primaryFontColor}
+                            />
+                            <Text style={{ ...styles.caste_title, color: colors.primaryFontColor }}>{item.name}</Text>
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
+        </GestureHandlerRootView>
     );
 };
 
@@ -110,7 +248,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginHorizontal: moderateScale(15),
-        paddingBottom:moderateScale(15)
+        paddingBottom: moderateScale(15)
     },
     caste_view: {
         flexDirection: 'row',
@@ -135,8 +273,7 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(12)
     },
     sliderContainer: {
-        marginTop: moderateScale(2),
-        backgroundColor:'#fff'
+        marginTop: moderateScale(15),
     },
     slider: {
         marginBottom: moderateScale(0),
@@ -145,4 +282,4 @@ const styles = StyleSheet.create({
 });
 
 // Make this component available to the app
-export default FilterCard;
+export default FilterCardddd;

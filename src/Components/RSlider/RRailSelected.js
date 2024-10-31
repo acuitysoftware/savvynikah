@@ -6,7 +6,7 @@ const RRailSelected = () => {
   const colors = useTheme()
   return (
     <View style={{...styles.root,
-      backgroundColor:'#CC002F',
+      backgroundColor:'rgba(2,142,0,255)',
     }}/>
   );
 };

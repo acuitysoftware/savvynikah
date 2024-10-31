@@ -75,9 +75,9 @@ const Home = () => {
                     <Text style={{ ...styles.filter_title, color: colors.primaryFontColor }}>Filter by Your Preferences</Text>
                     <FilterCard setModalVisible={setModalVisible} />
                     <View style={styles.modal_bottom_view}>
-                        <TouchableOpacity 
-                        onPress={()=> setModalVisible(false)}
-                        style={{ ...styles.cancle_btn, borderColor: colors.primaryFontColor }}>
+                        <TouchableOpacity
+                            onPress={() => setModalVisible(false)}
+                            style={{ ...styles.cancle_btn, borderColor: colors.primaryFontColor }}>
                             <Text style={{ ...styles.canclebtn_txt, color: colors.primaryFontColor }}>Cancle</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={{ ...styles.save_btn, backgroundColor: colors.primaryFontColor }}>

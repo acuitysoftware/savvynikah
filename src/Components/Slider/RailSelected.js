@@ -6,7 +6,7 @@ const RailSelected = () => {
   const colors = useTheme()
   return (
     <View style={{...styles.root,
-      backgroundColor:'#000',
+      backgroundColor:'rgba(2,142,0,255)',
     }}/>
   );
 };

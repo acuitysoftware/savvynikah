@@ -30,9 +30,6 @@ const getlogOtp = async (data) => {
 const getsectList = async () => {
     return HttpClient.post('/sects');
 }
-const getCasttList = async () => {
-    return HttpClient.post('/caste');
-}
 const getOccupationList = async () => {
     return HttpClient.post('/occupations');
 }
@@ -72,7 +69,6 @@ const AuthService = {
     getlogin,
     getlogOtp,
     getsectList,
-    getCasttList,
     getOccupationList,
     getEducationList,
     getLanguagesList,
