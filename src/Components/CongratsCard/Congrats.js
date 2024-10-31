@@ -17,21 +17,7 @@ import { useRoute } from '@react-navigation/native';
 const { height, width } = Dimensions.get('screen')
 // create a component
 const Congrats = () => {
-    const dispatch = useDispatch()
-    const route = useRoute()
-    const colors = useTheme();
-    const result = route.params.allData
-    console.log('reddddddddddddddddd==========================000000000000000000000', result);
-
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         AuthService.setAccount(result.data);
-    //         AuthService.setToken(result?.token);
-    //         dispatch(setuser(result.data));
-    //     }, 2000);
-
-    // }, []);
+    const colors = useTheme()
     return (
         <View style={styles.container}>
             <Header title='Congratulate' />
@@ -51,11 +37,13 @@ const Congrats = () => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
+        height: height-moderateScale(25),
+        width: width,
     },
     main_banner: {
         height: height,
-        width: width
+        width: width,
     },
     banner_img: {
         height: moderateScale(240),

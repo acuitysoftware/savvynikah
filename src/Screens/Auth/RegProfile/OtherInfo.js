@@ -8,12 +8,15 @@ import { moderateScale } from '../../../Constants/PixelRatio';
 import StepIndicator from 'react-native-step-indicator';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import NavigationService from '../../../Services/Navigation';
-import AuthService from '../../../Services/Auth';
 import { useRoute } from '@react-navigation/native';
 import SinglePicker from '../../../ui/SinglePicker';
 import Toast from "react-native-simple-toast";
 import { useDispatch } from 'react-redux';
 import { setuser } from '../../../Redux/reducer/User';
+import Modal from "react-native-modal";
+import Congrats from '../../../Components/CongratsCard/Congrats';
+import SingleSelectPicker from '../../../ui/SingleSelectPicker';
+import AuthService from '../../../Services/Auth';
 
 const { height, width } = Dimensions.get('screen')
 // create a component
@@ -26,8 +29,6 @@ const OtherInfo = ({ navigation }) => {
     const [address, setAddress] = useState('');
     const [pinCode, setPinCode] = useState('');
     const [hobby, setHobby] = useState('');
-    console.log('hobbyhobbyhobby==============================', hobby);
-
     const [habbit, setHabbit] = useState('');
     const [about, setAbout] = useState('');
     const [btnLoader, setBtnLoader] = useState(false);
@@ -73,6 +74,11 @@ const OtherInfo = ({ navigation }) => {
 
     const [cityData, setCityData] = useState([])
     const [cityId, setCityId] = useState(null);
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
 
     useEffect(() => {
@@ -157,9 +163,9 @@ const OtherInfo = ({ navigation }) => {
         if (hasError) return;
         let data = {
             "name": getOtherInfo?.name,
-            "dob  ": getOtherInfo?.dob,
-            "state_id  ": stateId,
-            "city_id  ": cityId,
+            "dob": getOtherInfo?.dob,
+            "state_id": stateId,
+            "city_id": cityId,
             "education_id": getOtherInfo?.Education,
             "maslak_id": getOtherInfo?.maslakId,
             "sect_id": getOtherInfo?.sector,
@@ -178,7 +184,7 @@ const OtherInfo = ({ navigation }) => {
             "description": about,
             "hobby": hobby,
             "marital_status": getOtherInfo?.Status,
-           "images":getOtherInfo?.ImageData
+            "images": getOtherInfo?.images
         }
         setBtnLoader(true)
         console.log('Signup data:==========000000000000000000000000000000000000000000==========', data);
@@ -186,11 +192,14 @@ const OtherInfo = ({ navigation }) => {
             .then((res) => {
                 console.log('Signup successful======================', res);
                 if (res && res.status == true) {
-                    setBtnLoader(false)
-                    Toast.show(res.message)
-                    AuthService.setAccount(res.data);
-                    dispatch(setuser(res.data));
-                    // navigation.navigate('Congrats'),
+                    setModalVisible(true);
+                    setTimeout(() => {
+                        setModalVisible(false);
+                        Toast.show(res.message)
+                        AuthService.setAccount(res.data);
+                        dispatch(setuser(res.data));
+                    }, 3000);
+                    setBtnLoader(false);
                 } else {
                     setBtnLoader(false)
                     Toast.show(res.message)
@@ -198,7 +207,7 @@ const OtherInfo = ({ navigation }) => {
                 console.log('Signup successful======================', res);
             })
             .catch((err) => {
-                console.log('Signup error', err);
+                console.log('finallllllllllllllllSignup error======', err);
                 setBtnLoader(false)
             });
     });
@@ -229,17 +238,19 @@ const OtherInfo = ({ navigation }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View>
                             <View style={styles.img_circle}>
-                                {/* <Image
-                                    source={ImageData.length > 0 ? { uri: ImageData[0]?.url } :
+                                <Image
+                                    source={getOtherInfo?.images?.length > 0 ? { uri: getOtherInfo?.images[0]?.url } :
                                         require('../../../assets/images/user.png')}
-                                    style={styles.user_img} /> */}
-                                <Image source={require('../../../assets/images/user.png')} style={styles.user_img} />
+                                    style={styles.user_img} />
                             </View>
                         </View>
-                        <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>Jhon Doe</Text>
+                        <View style={{ marginLeft: moderateScale(10) }}>
+                            <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{getOtherInfo?.name}</Text>
+                            <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>{getOtherInfo?.sectorName}</Text>
+                        </View>
                     </View>
 
-                    <View style={styles.inputbox_view}>
+                    {/* <View style={styles.inputbox_view}>
                         <View>
                             <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Address</Text>
                             <AppTextInput
@@ -257,7 +268,26 @@ const OtherInfo = ({ navigation }) => {
                                 onSelectItem={handleStateItem}
                             />
                         </View>
+                    </View> */}
+
+                    <View style={styles.inputbox_view}>
+                        <View>
+                            <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Address</Text>
+                            <AppTextInput
+                                inputContainerStyle={{ ...styles.aboutinputcontainer_sty, }}
+                                inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
+                                value={address}
+                                onChangeText={(val) => setAddress(val)}
+                            />
+                        </View>
                     </View>
+
+                    <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Select State</Text>
+                    <SingleSelectPicker
+                        data={stateData}
+                        placeholder="Select State"
+                        onSelectItem={handleStateItem}
+                    />
 
                     <View style={styles.inputbox_view}>
                         <View>
@@ -276,6 +306,8 @@ const OtherInfo = ({ navigation }) => {
                                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
                                 value={pinCode}
                                 onChangeText={(val) => setPinCode(val)}
+                                keyboardType='phone-pad'
+                                maxLength={6}
                             />
                         </View>
                     </View>
@@ -351,6 +383,20 @@ const OtherInfo = ({ navigation }) => {
                 </View>
 
             </KeyboardAwareScrollView>
+
+            <Modal
+                isVisible={isModalVisible}
+                // backdropOpacity={1}
+                style={{
+                    margin: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <View style={styles.modalView}>
+                    <Congrats />
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -371,7 +417,6 @@ const styles = StyleSheet.create({
     user_name: {
         fontFamily: FONTS.Inter.bold,
         fontSize: moderateScale(14),
-        marginLeft: moderateScale(10),
     },
     inputbox_view: {
         flexDirection: 'row',
@@ -392,9 +437,10 @@ const styles = StyleSheet.create({
         width: moderateScale(150),
     },
     aboutinputcontainer_sty: {
-        width: width - moderateScale(30)
+        width: width - moderateScale(30),
+        height: moderateScale(42),
+        borderRadius: moderateScale(7)
     },
-
     img_circle: {
         height: moderateScale(80),
         width: moderateScale(80),
@@ -405,9 +451,10 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(40),
     },
     user_img: {
-        height: moderateScale(70),
-        width: moderateScale(70),
-        resizeMode: 'contain',
+        height: moderateScale(74),
+        width: moderateScale(74),
+        resizeMode: 'cover',
+        borderRadius: moderateScale(35)
     },
     edit_img: {
         height: moderateScale(30),
@@ -450,7 +497,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-
+    modalView: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
 
 // make this component available to the app

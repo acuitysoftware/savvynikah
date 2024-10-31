@@ -205,7 +205,7 @@ const ProfessionalInfo = ({ navigation }) => {
       hasError = true;
       return false;
     }
-   
+
     if (hasError) return;
     let data = {
       "Education": educationId,
@@ -213,10 +213,10 @@ const ProfessionalInfo = ({ navigation }) => {
       "ocupation": OcupationId,
       "liveIn": liveIn,
       "Status": StatusId,
-     
+
     }
-    const newData ={...getPersonalData,...data}    
-    NavigationService.navigate('OtherInfo', { OtherInfoData: newData })  
+    const newData = { ...getPersonalData, ...data }
+    NavigationService.navigate('OtherInfo', { OtherInfoData: newData })
   }
 
 
@@ -245,14 +245,17 @@ const ProfessionalInfo = ({ navigation }) => {
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
             <View style={styles.img_circle}>
-            {/* <Image
-                  source={ImageData.length > 0 ? { uri: ImageData[0]?.url } :
-                    require('../../../assets/images/user.png')}
-                  style={styles.user_img} /> */}
-              <Image source={require('../../../assets/images/user.png')} style={styles.user_img} />
+              <Image
+                source={getPersonalData?.images?.length > 0 ? { uri: getPersonalData?.images[0]?.url } :
+                  require('../../../assets/images/user.png')}
+                style={styles.user_img} />
             </View>
 
-            {/* <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{getPersonalData}</Text> */}
+            <View style={{ marginLeft: moderateScale(10) }}>
+              <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{getPersonalData?.name}</Text>
+              <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>{getPersonalData?.sectorName}</Text>
+            </View>
+
           </View>
 
 
@@ -290,7 +293,7 @@ const ProfessionalInfo = ({ navigation }) => {
                 inputContainerStyle={{ ...styles.inputcontainer_sty }}
                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
                 value={liveIn}
-                onChangeText={(val)=>setLiveIn(val)}
+                onChangeText={(val) => setLiveIn(val)}
               />
             </View>
             <View>
@@ -304,7 +307,7 @@ const ProfessionalInfo = ({ navigation }) => {
           </View>
 
 
-          <View style={{ ...styles.inputbox_view, marginBottom:moderateScale(30), marginTop: moderateScale(30) }}>
+          <View style={{ ...styles.inputbox_view, marginBottom: moderateScale(30), marginTop: moderateScale(30) }}>
 
             <Pressable
               onPress={() => NavigationService.navigate('PresonalInfo')}
@@ -319,7 +322,7 @@ const ProfessionalInfo = ({ navigation }) => {
               gradientEnd={{ x: 1, y: 1 }}
               gradient={true}
               gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-              onPress={() =>getProfesoanlInfo() }
+              onPress={() => getProfesoanlInfo()}
             />
 
           </View>
@@ -346,14 +349,13 @@ const styles = StyleSheet.create({
   user_name: {
     fontFamily: FONTS.Inter.bold,
     fontSize: moderateScale(14),
-    marginLeft: moderateScale(10),
   },
   inputbox_view: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: moderateScale(15),
-    
+
   },
   input_title: {
     fontSize: moderateScale(12),
@@ -377,9 +379,10 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(40),
   },
   user_img: {
-    height: moderateScale(70),
-    width: moderateScale(70),
-    resizeMode: 'contain',
+    height: moderateScale(74),
+    width: moderateScale(74),
+    resizeMode: 'cover',
+    borderRadius: moderateScale(35)
   },
   edit_img: {
     height: moderateScale(30),

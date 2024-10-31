@@ -23,7 +23,7 @@ import SingleSelectPicker from '../../../ui/SingleSelectPicker';
 const PresonalInfo = ({ navigation }) => {
   const route = useRoute()
   const getSignupData = route.params.signupData
-  console.log('getdatddddddddddddddddddddddddddddddd8888888884111111111',getSignupData);
+  console.log('getdatddddddddddddddddddddddddddddddd8888888884111111111', getSignupData);
 
   const colors = useTheme();
   const [DateData, setDateData] = useState('');
@@ -38,6 +38,12 @@ const PresonalInfo = ({ navigation }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (getSignupData?.data?.full_name) {
+      setName(getSignupData.data.full_name);
+    }
+  }, [getSignupData]);
 
 
   const toggleModal = () => {
@@ -209,7 +215,7 @@ const PresonalInfo = ({ navigation }) => {
         // console.log('selectedAssetsselectedAssetsselectedAssets=====================================', selectedAssets);
 
         try {
-          const response = await HttpClient.uploadFile('/upload-images', selectedAssets,{});
+          const response = await HttpClient.uploadFile('/upload-images', selectedAssets, {});
           // console.log('Upload response:====================================================', JSON.stringify(response));
           setImageData(response?.data)
           setModalVisible(false);
@@ -321,11 +327,11 @@ const PresonalInfo = ({ navigation }) => {
     setGenderId(item.name);
   };
 
-  // console.log('castttttttttttttttttttttt', castId)
+  console.log('castttttttttttttttttttttt', ImageData)
 
   const getPersonalInfo = () => {
     let hasError = false;
-    if (name === '') {
+    if (ImageData === " " || (Array.isArray(ImageData) && ImageData.length === 0)) {
       Toast.show('Please Upload Your Images');
       hasError = true;
       return false;
@@ -355,11 +361,6 @@ const PresonalInfo = ({ navigation }) => {
       hasError = true;
       return false;
     }
-    if (AgeData === '') {
-      Toast.show('Please Select Age');
-      hasError = true;
-      return false;
-    }
     if (height === '') {
       Toast.show('Please Enter Height');
       hasError = true;
@@ -370,11 +371,22 @@ const PresonalInfo = ({ navigation }) => {
       hasError = true;
       return false;
     }
+    if (AgeData === '') {
+      Toast.show('Please Select Age');
+      hasError = true;
+      return false;
+    }
+    if (maslakId === '') {
+      Toast.show('Please Select MaslakId');
+      hasError = true;
+      return false;
+    }
+    
     if (hasError) return;
     let data = {
       "name": name,
       "sector": sectorId,
-      "sectorName":sectorName,
+      "sectorName": sectorName,
       "cast": castId,
       "dob": dob,
       "gender": genderId,
@@ -382,7 +394,7 @@ const PresonalInfo = ({ navigation }) => {
       "height": height,
       "weight": weight,
       "maslakId": maslakId,
-      "images": ImageData
+      "images": ImageData,
     }
     NavigationService.navigate('ProfessionalInfo', { personalData: data })
   }
@@ -431,9 +443,9 @@ const PresonalInfo = ({ navigation }) => {
               <AppTextInput
                 inputContainerStyle={{ ...styles.inputcontainer_sty }}
                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
-                value={name || getSignupData?.data?.full_name}
+                value={name}
                 onChangeText={(val) => setName(val)}
-                // editable={false}
+              // editable={false}
               />
             </View>
             <View>
@@ -494,6 +506,7 @@ const PresonalInfo = ({ navigation }) => {
                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
                 value={height}
                 onChangeText={(val) => setHeight(val)}
+                keyboardType='number-pad'
               />
             </View>
 
@@ -507,6 +520,7 @@ const PresonalInfo = ({ navigation }) => {
                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
                 value={weight}
                 onChangeText={(val) => setWeight(val)}
+                keyboardType='number-pad'
               />
             </View>
 
@@ -518,7 +532,7 @@ const PresonalInfo = ({ navigation }) => {
               </View>
             </View>
           </View>
-          <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Maslak (Optional)</Text>
+          <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Maslak</Text>
           <SingleSelectPicker
             data={maslakData}
             placeholder="Select Maslak"

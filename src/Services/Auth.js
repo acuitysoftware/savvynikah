@@ -46,17 +46,16 @@ const getStateList = async () => {
     return HttpClient.post('/states');
 }
 const getCityList = async (data) => {
-    return HttpClient.post('/cities',data);
+    return HttpClient.post('/cities', data);
 }
 const getMaslakList = async () => {
     return HttpClient.post('/maslaks');
 }
-
 const getUpdateRegProfile = async (data) => {
-    return HttpClient.post('/update-profile',data);
+    return HttpClient.post('/update-profile', data);
 }
 const getForgotPasswordEmail = async (data) => {
-    return HttpClient.post('/forgot-password',data);
+    return HttpClient.post('/forgot-password', data);
 }
 
 const AuthService = {

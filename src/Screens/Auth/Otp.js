@@ -70,11 +70,16 @@ const Otp = ({ navigation }) => {
             .then((res) => {
                 console.log('realllllllllllllluserrrrrrrrrriiiiiiiiiiiiiiiiiiiii', res);
                 if (res && res.status == true) {
-                    setBtnLoader(false)
-                    AuthService.setAccount(res.data);
-                    AuthService.setToken(res?.token);
-                    dispatch(setuser(res.data));
-                    NavigationService.navigate('PresonalInfo', { allData: res })
+                    AuthService.setToken(res?.token)
+                    if (res?.data?.is_profile_update === 0) {
+                        setBtnLoader(false)
+                        NavigationService.navigate('PresonalInfo',{signupData:res})
+                    } else {
+                        setBtnLoader(false)
+                        AuthService.setAccount(res.data);
+                        AuthService.setToken(res?.token);
+                        dispatch(setuser(res.data));
+                    }  
                 } else {
                     setBtnLoader(false)
                     Toast.show(res.message)
