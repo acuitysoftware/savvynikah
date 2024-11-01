@@ -5,26 +5,39 @@ import { moderateScale } from '../../Constants/PixelRatio';
 import { useTheme } from 'react-native-basic-elements';
 
 const { height, width } = Dimensions.get('screen');
-const PresonalInfoCard = () => {
+const PresonalInfoCard = ({ userProfileData }) => {
     const colors = useTheme();
     const [isExpanded, setIsExpanded] = useState(false);
+
+    function toFeet(n) {
+        var realFeet = (n * 0.3937) / 12;
+        var feet = Math.floor(realFeet);
+        var inches = Math.round((realFeet - feet) * 12);
+        return feet + 'ft-' + inches + 'inch';
+    }
+
+    const DateofBirth = new Date(userProfileData?.dob).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
 
     return (
         <View style={styles.container}>
             <Text style={{ ...styles.Presonal_txt, color: colors.secondaryFontColor }}>Presonal Information</Text>
 
             <Text
-                numberOfLines={isExpanded ? undefined : 5}
+                // numberOfLines={isExpanded ? undefined : 5}
                 style={{ ...styles.Presonal_details_txt }}
             >
-                This package doesn't integrate with React Navigation. If you want to integrate the tab view with React Navigation's navigation system, e.g. want to show screens in the tab bar and be able to navigate between them using navigation.navigate etc, use Material Top Tab Navigator instead.
+                {userProfileData?.description}
             </Text>
 
-            <Pressable onPress={() => setIsExpanded(!isExpanded)}>
+            {/* <Pressable onPress={() => setIsExpanded(!isExpanded)}>
                 <Text style={{ ...styles.toggleText, color: colors.secondaryFontColor }}>
                     {isExpanded ? 'See Less' : 'See More'}
                 </Text>
-            </Pressable>
+            </Pressable> */}
             <Text style={{
                 ...styles.Presonal_txt,
                 marginTop: moderateScale(10),
@@ -32,35 +45,43 @@ const PresonalInfoCard = () => {
             }}>Basic Details</Text>
             <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Name</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Jhon Doe</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.name}</Text>
             </View>
             <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Age</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>25 Years</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.age} Years</Text>
             </View>
             <View style={styles.name_view}>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Sector Name </Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.sect?.name}</Text>
+            </View>
+
+            <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Gender</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Male</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.gender}</Text>
             </View>
             <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Height</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>5ft 7in</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{toFeet(userProfileData?.height)}</Text>
             </View>
             <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Weight</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>67 kg</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.weight} kg</Text>
             </View>
+
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Status</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Single</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Cast</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.caste}</Text>
             </View>
+
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Language</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Hindi,English</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Maslak</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.maslak?.name}</Text>
             </View>
+
             <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>DOB</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>17 May 2002</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{DateofBirth}</Text>
             </View>
         </View>
     );
@@ -88,7 +109,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: moderateScale(7),
         paddingBottom: moderateScale(5),
-        width: width - moderateScale(120),
+        width: width - moderateScale(100),
     },
     name_txt: {
         fontFamily: FONTS.Inter.regular,
@@ -97,7 +118,7 @@ const styles = StyleSheet.create({
     username_txt: {
         fontFamily: FONTS.Inter.regular,
         fontSize: moderateScale(12),
-        textAlign:'right'
+        textAlign: 'right'
     },
 });
 

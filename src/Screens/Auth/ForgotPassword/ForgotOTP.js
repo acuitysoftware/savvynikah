@@ -17,7 +17,7 @@ const ForgotOTP = ({ navigation }) => {
     const colors = useTheme()
     const route = useRoute()
     const RegAllData = route.params.getEmail
-    console.log('reddddddddddddddddddddddddddddddd', RegAllData);
+    // console.log('reddddddddddddddddddddddddddddddd', RegAllData);
     const [btnLoader, setBtnLoader] = useState(false);
     const [timer, setTimer] = useState(60);
     const [canResend, setCanResend] = useState(false);
@@ -48,18 +48,18 @@ const ForgotOTP = ({ navigation }) => {
 
     const getEmailVerify = (() => {
         let data = {
-            "email": RegAllData?.email,
+            "phone": RegAllData,
             "otp": emailOtp
         }
         // console.log('otpdaaaaaaaaaaaaaaaa',data);
         setBtnLoader(true)
-        AuthService.getEmailOTP(data)
+        AuthService.getForgotPasswordOTP(data)
             .then((res) => {
-                // console.log('veriiiiiiiiiiiiiiiiiiiiiiiiiiii',res);
-                if (res && res.status == true) {
+                console.log('veriiiiiiiiiiiiiiiiiiiiiiiiiiii',res);
+                if (res && res.success == true) {
                     setBtnLoader(false)
                     Toast.show(res.message)
-                    NavigationService.navigate('SetPassword', { OTPData: res })
+                    NavigationService.navigate('SetPassword', { OTPData: res?.data })
                 } else {
                     setBtnLoader(false)
                     Toast.show(res.message)
@@ -73,7 +73,7 @@ const ForgotOTP = ({ navigation }) => {
     })
 
     const resendOtp = () => {
-        let data = { "email":  RegAllData?.email };
+        let data = { "phone":  RegAllData };
         AuthService.getForgotPasswordEmail(data)
             .then((res) => {
                 Toast.show('OTP resent successfully!');
@@ -86,9 +86,9 @@ const ForgotOTP = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header title='Email-Verify' />
-            <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter the Code sent to your Email Id</Text>
-            <Text style={{ ...styles.otp_txt, color: colors.second_txt }}>We've send the OTP to {RegAllData?.email}</Text>
+            <Header title='Mobile-Verify' />
+            <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter the Code sent to your Phone Number</Text>
+            <Text style={{ ...styles.otp_txt, color: colors.second_txt }}>We've send the OTP to {RegAllData}</Text>
             <View style={{ marginHorizontal: moderateScale(15), marginTop: moderateScale(15) }}>
                 <OTPTextInput
                     inputCount={6}

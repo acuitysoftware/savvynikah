@@ -18,12 +18,13 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AuthService from '../../../Services/Auth';
 import Toast from "react-native-simple-toast";
 import SingleSelectPicker from '../../../ui/SingleSelectPicker';
+import HomeService from '../../../Services/HomeServises';
+import { useSelector } from 'react-redux';
 
 // create a component
 const PresonalInfo = ({ navigation }) => {
   const route = useRoute()
-  const getSignupData = route.params.signupData
-  console.log('getdatddddddddddddddddddddddddddddddd8888888884111111111', getSignupData);
+  const { userData } = useSelector(state => state.User)
 
   const colors = useTheme();
   const [DateData, setDateData] = useState('');
@@ -39,17 +40,15 @@ const PresonalInfo = ({ navigation }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    if (getSignupData?.data?.name) {
-      setName(getSignupData.data.name);
-    }
-  }, [getSignupData]);
-
+  // useEffect(() => {
+  //   if (getSignupData?.data?.name) {
+  //     setName(getSignupData.data.name);
+  //   }
+  // }, [getSignupData]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
   const orderStatusData = [
     { name: 'Personal Info' },
     { name: 'Professional Info' },
@@ -94,8 +93,6 @@ const PresonalInfo = ({ navigation }) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-
-  // console.log('ImageDataImageDataImageDataImageData======================', JSON.stringify(ImageData));
 
   const DatehandleConfirm = (date) => {
     // console.log('date', moment(date).format('YYYY-MM-DD'));
@@ -157,45 +154,6 @@ const PresonalInfo = ({ navigation }) => {
     }
   };
 
-  // const onButtonPress = async (type, options) => {
-  //   try {
-  //     const result = type === 'capture'
-  //       ? await launchCamera(options)
-  //       : await launchImageLibrary({ ...options, selectionLimit: 0 });
-
-  //     if (result?.assets) {
-  //       const selectedAssets = result.assets;
-  //       setSelectedDocuments(prev => [...prev, ...selectedAssets]);
-
-  //       for (const asset of selectedAssets) {
-  //         const file = {
-  //           uri: asset.uri,
-  //           type: asset.type,
-  //           name: asset.fileName || `image_${Date.now()}.jpg`, 
-  //       };
-  //         console.log('fileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', file);
-  //         if (file.uri && file.type && file.name) {
-  //           try {
-  //             const response = await HttpClient.uploadFile('/upload-images', file, {});
-  //             console.log('Upload response:=================================================================', JSON.stringify(response));
-
-  //             setImageData(prev => Array.isArray(response) ? [...prev, ...response] : [...prev, response]);
-  //             setModalVisible(false);
-  //           } catch (error) {
-  //             console.error('Image Upload Error:', error);
-  //           }
-  //         } else {
-  //           console.error('Invalid file object properties:', file);
-  //         }
-  //       }
-  //       setModalVisible(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error in onButtonPress:', error);
-  //   }
-  // };
-
-
   const onButtonPress = async (type, options) => {
     try {
       const result = type === 'capture'
@@ -238,8 +196,38 @@ const PresonalInfo = ({ navigation }) => {
     setSectorId(item.id);
     setSectorName(item.name)
   };
+  const [userProfileData, setUserProfileData] = useState([])
+  useEffect(() => {
+    geUserFullProfile()
+  }, [])
 
-  // console.log('selectedItemId', sectorId);
+  const geUserFullProfile = () => {
+    let data = {
+      "user_id": userData.id,
+    };
+    HomeService.getuserFullData(data)
+      .then((res) => {
+        console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
+        if (res && res.success === true) {
+          setUserProfileData(res.data);
+          setName(res?.data?.name)
+          setSectorId(res?.data?.sect?.id)
+          setCastId(res?.data?.caste)
+          setDob(res?.data?.sect?.dob)
+          setGenderId(res?.data?.gender)
+          setAgeData(res?.data?.age)
+          setHeight(res?.data?.height)
+          setWeight(res?.data?.weight)
+          setMaslakId(res?.data?.maslak?.id)
+          setImageData(res?.data?.profile_images)
+        }
+      })
+      .catch((err) => {
+        console.log('errrr', err);
+
+      })
+  }
+
 
 
   useEffect(() => {
@@ -247,7 +235,7 @@ const PresonalInfo = ({ navigation }) => {
   }, [])
 
   const getSectData = () => {
-    AuthService.getsectList()
+    HomeService.getsectList()
       .then((res) => {
         // console.log('ressectorrrrrrrrrrrrrr', res);
 
@@ -270,7 +258,7 @@ const PresonalInfo = ({ navigation }) => {
   const [maslakId, setMaslakId] = useState(null);
 
   const getMaslakData = () => {
-    AuthService.getMaslakList()
+    HomeService.getMaslakList()
       .then((res) => {
         // console.log('ressectorrrrrrrrrrrrrr', res);
         if (res && res.status == true) {
@@ -330,59 +318,59 @@ const PresonalInfo = ({ navigation }) => {
   console.log('castttttttttttttttttttttt', ImageData)
 
   const getPersonalInfo = () => {
-    let hasError = false;
-    if (ImageData === " " || (Array.isArray(ImageData) && ImageData.length === 0)) {
-      Toast.show('Please Upload Your Images');
-      hasError = true;
-      return false;
-    }
-    if (name === '') {
-      Toast.show('Please enter  Name');
-      hasError = true;
-      return false;
-    }
-    if (sectorId === '') {
-      Toast.show('Please Select Sector');
-      hasError = true;
-      return false;
-    }
-    if (castId === '') {
-      Toast.show('Please Select Cast');
-      hasError = true;
-      return false;
-    }
-    if (dob === '') {
-      Toast.show('Choose your DBO');
-      hasError = true;
-      return false;
-    }
-    if (genderId === '') {
-      Toast.show('Please Select Gender');
-      hasError = true;
-      return false;
-    }
-    if (height === '') {
-      Toast.show('Please Enter Height');
-      hasError = true;
-      return false;
-    }
-    if (weight === '') {
-      Toast.show('Please Enter Weight');
-      hasError = true;
-      return false;
-    }
-    if (AgeData === '') {
-      Toast.show('Please Select Age');
-      hasError = true;
-      return false;
-    }
-    if (maslakId === '') {
-      Toast.show('Please Select MaslakId');
-      hasError = true;
-      return false;
-    }
-    
-    if (hasError) return;
+    // let hasError = false;
+    // if (ImageData === " " || (Array.isArray(ImageData) && ImageData.length === 0)) {
+    //   Toast.show('Please Upload Your Images');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (name === '') {
+    //   Toast.show('Please enter  Name');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (sectorId === '') {
+    //   Toast.show('Please Select Sector');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (castId === '') {
+    //   Toast.show('Please Select Cast');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (dob === '') {
+    //   Toast.show('Choose your DBO');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (genderId === '') {
+    //   Toast.show('Please Select Gender');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (height === '') {
+    //   Toast.show('Please Enter Height');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (weight === '') {
+    //   Toast.show('Please Enter Weight');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (AgeData === '') {
+    //   Toast.show('Please Select Age');
+    //   hasError = true;
+    //   return false;
+    // }
+    // if (maslakId === '') {
+    //   Toast.show('Please Select MaslakId');
+    //   hasError = true;
+    //   return false;
+    // }
+
+    // if (hasError) return;
     let data = {
       "name": name,
       "sector": sectorId,
@@ -433,7 +421,7 @@ const PresonalInfo = ({ navigation }) => {
               </View>
               <Image source={require('../../../assets/images/edit.png')} style={styles.edit_img} />
             </TouchableOpacity>
-            <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{getSignupData?.data?.name}</Text>
+            <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{userProfileData?.name}</Text>
           </View>
 
 

@@ -5,44 +5,39 @@ import { moderateScale } from '../../Constants/PixelRatio';
 import { useTheme } from 'react-native-basic-elements';
 
 const { height, width } = Dimensions.get('screen');
-const ProfessionalInfoCard = () => {
+const ProfessionalInfoCard = ({userProfileData}) => {
     const colors = useTheme();
     return (
         <View style={styles.container}>
             <Text style={{ ...styles.Presonal_txt, color: colors.secondaryFontColor }}>Professional Information</Text>
 
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Name</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Jhon Doe</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Age</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>25 Years</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Gender</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Male</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Height</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>5ft 7in</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Weight</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>67 kg</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Status</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Single</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Marital Status</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.user_marital_status?.name}</Text>
             </View>
             <View style={styles.name_view}>
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Language</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Hindi,English</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>
+                    {userProfileData?.languages?.map(language => language.name).join(', ')}
+                </Text>
             </View>
+
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>DOB</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>17 May 2002</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Occupation</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.occupation?.name}</Text>
             </View>
+
+            <View style={styles.name_view}>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Education</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.education?.name}</Text>
+            </View>
+
+            <View style={styles.name_view}>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Lives In</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.lives_in}</Text>
+            </View>
+
+           
         </View>
     );
 };
@@ -61,7 +56,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: moderateScale(7),
         paddingBottom: moderateScale(5),
-        width: width - moderateScale(120),
+        width: width - moderateScale(100),
     },
     name_txt: {
         fontFamily: FONTS.Inter.regular,

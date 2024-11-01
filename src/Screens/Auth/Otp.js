@@ -48,7 +48,7 @@ const Otp = ({ navigation }) => {
     };
 
     const resendOtp = () => {
-        let data = { "email": emailID };
+        let data = { "phone": emailID };
         AuthService.getlogin(data)
             .then((res) => {
                 Toast.show('OTP resent successfully!');
@@ -61,7 +61,7 @@ const Otp = ({ navigation }) => {
 
     const getEmailVerify = (() => {
         let data = {
-            "email": emailID,
+            "phone": emailID,
             "otp": emailOtp
         }
         // console.log('otpdaaaaaaaaaaaaaaaa',data);
@@ -71,6 +71,11 @@ const Otp = ({ navigation }) => {
                 console.log('realllllllllllllluserrrrrrrrrriiiiiiiiiiiiiiiiiiiii', res);
                 if (res && res.status == true) {
                     AuthService.setToken(res?.token)
+
+                    // AuthService.setAccount(res.data);
+                    // AuthService.setToken(res?.token);
+                    // dispatch(setuser(res.data));
+
                     if (res?.data?.is_profile_update === 0) {
                         setBtnLoader(false)
                         NavigationService.navigate('PresonalInfo',{signupData:res})

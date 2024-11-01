@@ -30,7 +30,54 @@ const getSubscriptionList = async () => {
 const getSubscriptionPayment = async (data) => {
     return HttpClient.post('/subscription-purchase',data);
 }
-
+const getVisitorListData = async () => {
+    return HttpClient.post('/my-visitors');
+}
+const getWishListData = async (data) => {
+    return HttpClient.post('/wishlist',data);
+}
+const getuserListNdFilterData = async (data) => {
+    return HttpClient.post('/user-serach',data);
+}
+const getuserFullData = async (data) => {
+    return HttpClient.post('/user-details',data);
+}
+const getSubmitPayment = async (data) => {
+    return HttpClient.post('/subscription-purchase',data);
+}
+const getMySubscriptionPlans = async () => {
+    return HttpClient.post('/my-payments');
+}
+const getAddWislit = async (data) => {
+    return HttpClient.post('/add-to-wishlist',data);
+}
+const getRemoveWislit = async (data) => {
+    return HttpClient.post('/remove-to-wishlist',data);
+}
+const getFullProfile = async () => {
+    return HttpClient.post('/user');
+}
+const getsectList = async () => {
+    return HttpClient.post('/sects');
+}
+const getLanguagesList = async () => {
+    return HttpClient.post('/languages');
+}
+const getStateList = async () => {
+    return HttpClient.post('/states');
+}
+const getCityList = async (data) => {
+    return HttpClient.post('/cities', data);
+}
+const getMaslakList = async () => {
+    return HttpClient.post('/maslaks');
+}
+const getUpdateRegProfile = async (data) => {
+    return HttpClient.post('/update-profile', data);
+}
+const getChangePassword = async (data) => {
+    return HttpClient.post('/change-password', data);
+}
 
 const HomeService = {
     getAccount,
@@ -41,7 +88,23 @@ const HomeService = {
     getEducationList,
     getStatusList,
     getSubscriptionList,
-    getSubscriptionPayment
+    getSubscriptionPayment,
+    getVisitorListData,
+    getWishListData,
+    getuserListNdFilterData,
+    getuserFullData,
+    getSubmitPayment,
+    getMySubscriptionPlans,
+    getAddWislit,
+    getRemoveWislit,
+    getFullProfile,
+    getsectList,
+    getLanguagesList,
+    getStateList,
+    getCityList,
+    getMaslakList,
+    getUpdateRegProfile,
+    getChangePassword
 }
 
 export default HomeService;

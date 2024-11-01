@@ -1,57 +1,102 @@
 //import liraries
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { moderateScale } from '../../Constants/PixelRatio';
 import { Image } from 'react-native';
 import { FONTS } from '../../Constants/Fonts';
 import { AppButton, useTheme } from 'react-native-basic-elements';
+import HomeService from '../../Services/HomeServises';
+import { useSelector } from 'react-redux';
+import NavigationService from '../../Services/Navigation';
 
 // create a component
 const MyProfile = () => {
     const colors = useTheme();
+    const { userData } = useSelector(state => state.User)
+    const [userProfileData, setUserProfileData] = useState([])
+    useEffect(() => {
+        geUserFullProfile()
+    }, [])
+
+    const geUserFullProfile = () => {
+        let data = {
+            "user_id": userData.id
+        };
+        HomeService.getuserFullData(data)
+            .then((res) => {
+                console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
+                if (res && res.success === true) {
+                    setUserProfileData(res.data);
+                }
+
+            })
+            .catch((err) => {
+                console.log('errrr', err);
+
+            })
+    }
+
+    function toFeet(n) {
+        var realFeet = (n * 0.3937) / 12;
+        var feet = Math.floor(realFeet);
+        var inches = Math.round((realFeet - feet) * 12);
+        return feet + 'ft-' + inches + 'inch';
+    }
+
+    const DateofBirth = new Date(userProfileData?.dob).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+    });
     return (
         <View style={styles.container}>
             <View style={styles.user_view}>
-                <Image source={require('../../assets/images/6dc01.png')} style={styles.user_img} />
+                <Image
+                    source={userProfileData?.profile_images?.length > 0 ? { uri: userProfileData?.profile_images[0]?.image_path } :
+                        require('../../assets/images/user.png')}
+                    style={styles.user_img} />
+                {/* <Image source={require('../../assets/images/6dc01.png')} style={styles.user_img} /> */}
                 <View style={{ marginLeft: moderateScale(15) }}>
-                    <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>Jgon Doe</Text>
-                    <Text style={{ ...styles.occupation, color: colors.light_txt }}>Doctor</Text>
+                    <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{userProfileData?.name}</Text>
+                    <Text style={{ ...styles.occupation, color: colors.light_txt }}>{userProfileData?.occupation?.name}</Text>
                 </View>
             </View>
             <View style={styles.main_view}>
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>Age</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>24 Years</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>{userProfileData?.age} Years</Text>
                 </View>
                 <View style={styles.line} />
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>Gender</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>Female</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>{userProfileData?.gender}</Text>
                 </View>
                 <View style={styles.line} />
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>Height</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>5ft 2in</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>{toFeet(userProfileData?.height)}</Text>
                 </View>
                 <View style={styles.line} />
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>Weight</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>50 kg</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>{userProfileData?.weight} kg</Text>
                 </View>
                 <View style={styles.line} />
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>Status</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>Single</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>{userProfileData?.user_marital_status?.name}</Text>
                 </View>
                 <View style={styles.line} />
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>Language</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>English,Hindi</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>
+                    {userProfileData?.languages?.map(language => language.name).join(', ')}
+                    </Text>
                 </View>
                 <View style={styles.line} />
                 <View style={styles.age_view}>
                     <Text style={{ ...styles.age_txt, color: colors.light_txt }}>DOB</Text>
-                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>17 Oct 1990</Text>
+                    <Text style={{ ...styles.age_txt, color: colors.secondaryFontColor }}>{DateofBirth}</Text>
                 </View>
                 <View style={styles.line} />
             </View>
@@ -63,7 +108,7 @@ const MyProfile = () => {
                 gradientEnd={{ x: 1, y: 1 }}
                 gradient={true}
                 gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-                // onPress={() => navigation.navigate('PresonalInfo')}
+            onPress={() => NavigationService.navigate('PresonalInfo')}
             />
         </View>
     );
@@ -84,7 +129,7 @@ const styles = StyleSheet.create({
         height: moderateScale(70),
         width: moderateScale(70),
         borderRadius: moderateScale(40),
-        resizeMode: 'contain'
+        resizeMode: 'cover'
     },
     user_name: {
         fontFamily: FONTS.Inter.semibold,

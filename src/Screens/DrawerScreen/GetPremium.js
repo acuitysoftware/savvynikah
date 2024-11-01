@@ -10,6 +10,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
 import { useSelector } from 'react-redux';
+import NavigationService from '../../Services/Navigation';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -18,29 +19,25 @@ const GetPremium = () => {
     const colors = useTheme();
     const navigation = useNavigation();
     const [selectedPlan, setSelectedPlan] = useState(null);
-    console.log('hgggggggggggggggggggg',selectedPlan);
+    console.log('hgggggggggggggggggggg', selectedPlan);
     const [subPlanList, setSubPlanList] = useState([])
-    
-    const [loading, setLoading] = useState(true);
 
-   
+    const [loading, setLoading] = useState(true);
+    const [btnLoader, setBtnLoader] = useState(false);
 
     const handlePlanSelect = (index) => {
         setSelectedPlan(index);
     };
 
-  
-
     useEffect(() => {
-        getSubscriptionLise()
+        getSubscriptionData()
     }, [])
-    
 
-    const getSubscriptionLise = () => {
+
+    const getSubscriptionData = () => {
         HomeService.getSubscriptionList()
             .then((res) => {
                 console.log('ddddddsssssssssssssssssss00000000000', res);
-
                 if (res && res.status == true) {
                     setSubPlanList(res.data)
                 }
@@ -53,43 +50,67 @@ const GetPremium = () => {
             });
     };
 
-    const Setpayment = () => {
-        var options = {
-            description: 'Credits towards consultation',
-            image: '../../assets/images/paymentlog.png',
-            currency: 'INR',
-            key: 'rzp_test_BTKOTgmenSECJo',
-            amount: Number(selectedPlan.price) * 100,
-            name: 'SavvyNikah',
-            order_id: '',
-            prefill: {
-                email: userData?.email,
-                contact: userData?.phone,
-                name:  userData?.full_name
-            },
-            theme: { color: 'rgba(30,68,28,255)' }
+    // const Setpayment = () => {
+    //     var options = {
+    //         description: 'Credits towards consultation',
+    //         image: '../../assets/images/paymentlog.png',
+    //         currency: 'INR',
+    //         key: 'rzp_test_BTKOTgmenSECJo',
+    //         amount: Number(selectedPlan.price) * 100,
+    //         name: 'SavvyNikah',
+    //         order_id: '',
+    //         prefill: {
+    //             email: userData?.email,
+    //             contact: userData?.phone,
+    //             name:  userData?.full_name
+    //         },
+    //         theme: { color: 'rgba(30,68,28,255)' }
+    //     }
+    //     RazorpayCheckout.open(options).then((data) => {
+    //         console.log('paymentIDDDDD-------------------------', data.razorpay_payment_id);
+    //         let uuidCustom = uuid.v4();
+    //         let traRef = uuidCustom.split('-');
+    //         let Paymentdata = {
+    //             "subscription_id": "2",
+    //             "transaction_id": `${traRef[0]}-${traRef[1]}-${traRef[2]}`,
+    //             "order_id": "jhfdfjffjk"
+    //         }
+    //         console.log('data1--------------===================', Paymentdata);
+    //         if (data.razorpay_payment_id) {
+    //             HomeService.getSubscriptionPayment(Paymentdata).then((res) => {
+    //                 console.log('res------------------', res);
+    //                 // Toast.show('Price Update Success')
+    //                 // NavigationService.back()
+    //             })
+    //         }
+    //     }).catch((error) => {
+    //         // alert(`Error: ${error.code} | ${error.description}`);
+    //     });
+    // }
+    const submitPayment = (() => {
+        let data = {
+            "subscription_id": selectedPlan?.id,
+            "transaction_id": "pay_Ln3KD7pHzx4hI3",
+            "order_id": "08676AGHJKKLLKH656"
         }
-        RazorpayCheckout.open(options).then((data) => {
-            console.log('paymentIDDDDD-------------------------', data.razorpay_payment_id);
-            let uuidCustom = uuid.v4();
-            let traRef = uuidCustom.split('-');
-            let Paymentdata = {
-                "subscription_id": "2",
-                "transaction_id": `${traRef[0]}-${traRef[1]}-${traRef[2]}`,
-                "order_id": "jhfdfjffjk"
-            }
-            console.log('data1--------------===================', Paymentdata);
-            if (data.razorpay_payment_id) {
-                HomeService.getSubscriptionPayment(Paymentdata).then((res) => {
-                    console.log('res------------------', res);
-                    // Toast.show('Price Update Success')
-                    // NavigationService.back()
-                })
-            }
-        }).catch((error) => {
-            // alert(`Error: ${error.code} | ${error.description}`);
-        });
-    }
+        setBtnLoader(true)
+        HomeService.getSubmitPayment(data)
+            .then((res) => {
+                console.log('paymentttttttttttttttttttttttttttttttttttt', res);
+                if (res && res.status == true) {
+                    setBtnLoader(false)
+                    Toast.show(res.message);
+                    NavigationService.navigate('Home')
+                } else {
+                    setBtnLoader(false)
+                    Toast.show(res.message);
+                }   
+            })
+            .catch((err) => {
+                console.log('paymenterr', err);
+                setBtnLoader(false)
+            })
+    })
 
 
 
@@ -129,7 +150,17 @@ const GetPremium = () => {
                     gradientEnd={{ x: 1, y: 1 }}
                     gradient={true}
                     gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-                    onPress={()=>Setpayment()}
+                    onPress={() => submitPayment()}
+                    loader={
+                        btnLoader
+                            ? {
+                                position: "right",
+                                color: "#fff",
+                                size: "small",
+                            }
+                            : null
+                    }
+                    disabled={btnLoader}
                 />
                 <Text style={{ ...styles.bottom_txt, color: colors.secondaryFontColor }}>
                     By Placing this order, you agree to the Terms of Service and Privacy Policy. Subscription Automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.

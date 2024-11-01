@@ -200,7 +200,7 @@ const Signup = ({ navigation }) => {
                         
                     />
 
-                    <AppButton
+                    {/* <AppButton
                         textStyle={styles.buttn_txt}
                         style={styles.button_sty}
                         title="Next"
@@ -210,7 +210,7 @@ const Signup = ({ navigation }) => {
                         gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
                         onPress={() => NavigationService.navigate('PresonalInfo')}
 
-                    />
+                    /> */}
 
                     <TouchableOpacity onPress={() => NavigationService.navigate('Login')}>
                         <Text style={{ ...styles.bottom_txt, color: colors.secondaryFontColor }}>Don’t have an account?

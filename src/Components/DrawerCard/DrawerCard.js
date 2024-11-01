@@ -1,5 +1,5 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { moderateScale } from '../../Constants/PixelRatio';
 import { Colors } from '../../Constants/Colors';
@@ -10,12 +10,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import AuthService from '../../Services/Auth';
 import { logout } from '../../Redux/reducer/User';
 import Toast from "react-native-simple-toast";
+import HomeService from '../../Services/HomeServises';
 
 
 const DrawerCard = () => {
     const colors = useTheme();
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.User)
+    const [userProfileData, setUserProfileData] = useState([])
+
     const drawerScreen = [
         {
             img: require('../../assets/images/profile.png'),
@@ -75,7 +78,30 @@ const DrawerCard = () => {
         dispatch(logout());
     };
 
+   
+    useEffect(() => {
+        geUserFullProfile()
+    }, [])
 
+    const geUserFullProfile = () => {
+        let data = {
+            "user_id": userData.id
+        };
+        HomeService.getuserFullData(data)
+            .then((res) => {
+                console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
+                if (res && res.success === true) {
+                    setUserProfileData(res.data);
+                }
+
+            })
+            .catch((err) => {
+                console.log('errrr', err);
+
+            })
+    }
+
+  
 
     return (
         <View style={styles.container_sty}>
@@ -83,15 +109,19 @@ const DrawerCard = () => {
                 <Pressable onPress={() => NavigationService.closeDrawer()}>
                     <Icon type='AntDesign' name='close' size={20} style={styles.icon_view} />
                 </Pressable>
-
-                <Pressable onPress={() => NavigationService.navigate('ViewProfile')}
+                <Pressable
+                    onPress={() => NavigationService.navigate('ViewProfile', { userId: userProfileData.id })}
                     style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View style={styles.user_circle}>
-                        <Image source={require('../../assets/images/6dc01.png')} style={styles.user_img_sty} />
+                        <Image
+                            source={userProfileData?.profile_images?.length > 0 ? { uri: userProfileData?.profile_images[0]?.image_path } :
+                                require('../../assets/images/user.png')}
+                            style={styles.user_img_sty} />
+
                     </View>
                     <View style={{ marginLeft: moderateScale(10) }}>
-                        <Text style={{ ...styles.user_name, color: colors.primaryFontColor }}>Jhon Doe</Text>
-                        <Text style={{ ...styles.user_email, color: colors.primaryFontColor }}>Jhon.doe@gmail.com</Text>
+                        <Text style={{ ...styles.user_name, color: colors.primaryFontColor }}>{userProfileData?.name}</Text>
+                        <Text style={{ ...styles.user_email, color: colors.primaryFontColor }}>{userProfileData?.email}</Text>
                     </View>
                 </Pressable>
 
@@ -112,7 +142,7 @@ const DrawerCard = () => {
                 })}
                 <TouchableOpacity shadow={false}
                     style={{ ...styles.card_sty }}
-                    onPress={() =>  logoutUser() }>
+                    onPress={() => logoutUser()}>
                     <Image source={require('../../assets/images/logout.png')} style={{ ...styles.notification_img }} />
                     <Text style={{ ...styles.notification_txt, color: '#fff', }}>Sign Out</Text>
                 </TouchableOpacity>

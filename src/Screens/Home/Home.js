@@ -1,6 +1,6 @@
 //import liraries
-import React, { Component, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, Pressable, Animated, TouchableOpacity } from 'react-native';
+import React, { Component, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, ScrollView, Pressable, Animated, TouchableOpacity, ActivityIndicator } from 'react-native';
 import HomeHeader from '../../Components/Header/HomeHeader';
 import { Image } from 'react-native';
 import { ImageBackground } from 'react-native';
@@ -11,12 +11,13 @@ import ProfileListCard from '../../Components/HomeCard/ProfileListCard';
 import Modal from "react-native-modal";
 import FilterCard from '../../Components/HomeCard/FilterCard';
 import { useSelector } from 'react-redux';
+import HomeService from '../../Services/HomeServises';
 
 const { height, width } = Dimensions.get('screen')
 const Home = () => {
-
     const { userData } = useSelector(state => state.User)
-    console.log('userdata---------------home--------------------', userData);
+    // console.log('userdata---------------home--------------------', userData);
+    const [loading, setLoading] = useState(true);
     const colors = useTheme();
     const [isModalVisible, setModalVisible] = useState(false);
     const modalAnimation = useRef(new Animated.Value(0)).current;
@@ -30,6 +31,53 @@ const Home = () => {
             useNativeDriver: true,
         }).start();
     };
+
+    useEffect(() => {
+        getUsetData()
+    }, [])
+
+    const [filterData, setFilterData] = useState(null);
+    const [ProfileListData, setProfileListData] = useState([]);
+    console.log('profffffffffffffffffffffffffffffff',ProfileListData);
+    
+
+    const handleFilterData = (data) => {
+        setFilterData(data);
+        setModalVisible(false);
+    };
+
+    const getUsetData = (() => {
+        let data = {
+            "gender": filterData?.gender ?? null,
+            "marital_status": filterData?.marital_status ?? null,
+            "education_id": filterData?.education_id ?? null,
+            "occupation_id": filterData?.occupation_id ?? null,
+            "min_height": filterData?.min_height ?? undefined,
+            "max_height": filterData?.max_height ?? undefined,
+            "min_age": filterData?.min_age ?? undefined,
+            "max_age": filterData?.max_age ?? undefined,
+            "caste": filterData?.caste ?? null
+        };
+        // console.log('filllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll+++++++++++++++++++++++++++', data);
+
+        HomeService.getuserListNdFilterData(data)
+            .then((res) => {
+                // console.log('gettttttttttttttttttttttttttttttttttttttttttttttt0000000000000000000000000ttttt',JSON.stringify(res));
+                if (res && res.success == true) {
+                    setProfileListData(res.data)
+                } 
+            })
+            .catch((err) => {
+                console.log('errrrrhomrlist', err);
+
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    })
+
+
+
 
     return (
         <View style={styles.container}>
@@ -50,16 +98,41 @@ const Home = () => {
                         </Pressable>
                     </View>
 
-                    <View style={{ ...styles.Main_list_view, backgroundColor: colors.primaryFontColor }}>
-                        <ScrollView showsVerticalScrollIndicator={false}>
-                            {[...Array(8)].map((_, index) => (
-                                <ProfileListCard key={index} />
-                            ))}
-                        </ScrollView>
+                    <View>
+                        {loading ? (
+                            <View style={styles.loaderContainer}>
+                                <ActivityIndicator size="large" color="#fff" />
+                            </View>
+                        ) : (
+                            <View>
+
+                                {
+                                    ProfileListData?.length > 0 ?
+                                        <View style={{ ...styles.Main_list_view, backgroundColor: colors.primaryFontColor }}>
+                                            <ScrollView showsVerticalScrollIndicator={false}>
+                                                {ProfileListData.map((item, index) => (
+                                                    <ProfileListCard item={item} index={index} />
+                                                ))}
+                                            </ScrollView>
+                                      
+
+                                       <Text style={{color:'red'}}>jsssssssssssssssssssssss</Text>
+                                        </View>
+                                        :
+                                        <View style={styles.noDataView}>
+                                            <Image source={require('../../assets/images/nodata.png')} style={styles.nodataImg} />
+                                        </View>
+                                }
+
+
+                            </View>
+                        )}
+
                     </View>
+
+
                 </View>
             </ScrollView>
-
 
 
             <Modal
@@ -73,8 +146,8 @@ const Home = () => {
             >
                 <View style={{ ...styles.modalView, backgroundColor: colors.buttonColor }}>
                     <Text style={{ ...styles.filter_title, color: colors.primaryFontColor }}>Filter by Your Preferences</Text>
-                    <FilterCard setModalVisible={setModalVisible} />
-                    <View style={styles.modal_bottom_view}>
+                    <FilterCard setModalVisible={setModalVisible} onSaveFilter={handleFilterData} />
+                    {/* <View style={styles.modal_bottom_view}>
                         <TouchableOpacity
                             onPress={() => setModalVisible(false)}
                             style={{ ...styles.cancle_btn, borderColor: colors.primaryFontColor }}>
@@ -83,7 +156,7 @@ const Home = () => {
                         <TouchableOpacity style={{ ...styles.save_btn, backgroundColor: colors.primaryFontColor }}>
                             <Text style={{ ...styles.canclebtn_txt, color: colors.primaryThemeColor }}>Save</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
             </Modal>
 
@@ -162,29 +235,26 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(14),
         textAlign: 'center'
     },
-    modal_bottom_view: {
-        height: moderateScale(45),
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    cancle_btn: {
-        height: moderateScale(50),
-        width: moderateScale(130),
-        borderWidth: 1,
-        borderRadius: moderateScale(7),
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        marginTop: moderateScale(30)
     },
-    canclebtn_txt: {
-        fontFamily: FONTS.Inter.bold,
+    noDataView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: moderateScale(20),
+        marginTop: moderateScale(100)
+    },
+    noDataText: {
         fontSize: moderateScale(15),
+        fontFamily: FONTS.Inter.bold,
     },
-    save_btn: {
-        height: moderateScale(50),
-        width: moderateScale(130),
-        borderRadius: moderateScale(7),
-        alignItems: 'center',
-        justifyContent: 'center'
+    nodataImg: {
+        height: moderateScale(100),
+        width: moderateScale(100),
+        // tintColor: 'green'z
     }
 });
 

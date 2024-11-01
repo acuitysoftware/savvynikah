@@ -17,7 +17,7 @@ const EmailVerify = ({ navigation }) => {
     const colors = useTheme()
     const route = useRoute()
     const RegAllData = route.params.regData
-    console.log('reddddddddddddddddddddddddddddddd', RegAllData);
+    // console.log('reddddddddddddddddddddddddddddddd', RegAllData);
     const [btnLoader, setBtnLoader] = useState(false);
     const [timer, setTimer] = useState(60);
     const [canResend, setCanResend] = useState(false);
@@ -48,14 +48,14 @@ const EmailVerify = ({ navigation }) => {
 
     const getEmailVerify = (() => {
         let data = {
-            "email": RegAllData?.email,
+            "phone": RegAllData?.phone,
             "otp": emailOtp
         }
-        // console.log('otpdaaaaaaaaaaaaaaaa',data);
+        console.log('otpdaaaaaaaaaaaaaaaa',data);
         setBtnLoader(true)
         AuthService.getEmailOTP(data)
             .then((res) => {
-                // console.log('veriiiiiiiiiiiiiiiiiiiiiiiiiiii',res);
+                console.log('veriiiiiiiiiiiiiiiiiiiiiiiiiiii',res);
                 if (res && res.status == true) {
                     setBtnLoader(false)
                     Toast.show(res.message)
@@ -63,7 +63,7 @@ const EmailVerify = ({ navigation }) => {
                     NavigationService.navigate('PresonalInfo',{signupData:res})
                 } else {
                     setBtnLoader(false)
-                    Toast.show(res.message)
+                    Toast.show('Incorrect OTP')
                 }
             })
             .catch((err) => {
@@ -74,8 +74,8 @@ const EmailVerify = ({ navigation }) => {
     })
 
     const resendOtp = () => {
-        let data = { "email":  RegAllData?.email };
-        AuthService.getForgotPasswordEmail(data)
+        let data = { "phone":  RegAllData?.phone };
+        AuthService.resend-otp(data)
             .then((res) => {
                 Toast.show('OTP resent successfully!');
                 startTimer();
@@ -87,9 +87,9 @@ const EmailVerify = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header title='Email-Verify' />
-            <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter the Code sent to your Email Id</Text>
-            <Text style={{ ...styles.otp_txt, color: colors.second_txt }}>We've send the OTP to {RegAllData?.email}</Text>
+            <Header title='Mobile-Verify' />
+            <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter the OTP sent to your Phone Number</Text>
+            <Text style={{ ...styles.otp_txt, color: colors.second_txt }}>We've send the OTP to {RegAllData?.phone}</Text>
             <View style={{ marginHorizontal: moderateScale(15), marginTop: moderateScale(15) }}>
                 <OTPTextInput
                     inputCount={6}
@@ -130,7 +130,7 @@ const EmailVerify = ({ navigation }) => {
 
             {canResend ? (
                 <Text style={{ ...styles.resend_txt, color: colors.second_txt }}
-                // onPress={resendOtp}
+                onPress={resendOtp}
                 >
                     Resend OTP
                 </Text>

@@ -57,6 +57,15 @@ const getUpdateRegProfile = async (data) => {
 const getForgotPasswordEmail = async (data) => {
     return HttpClient.post('/forgot-password', data);
 }
+const getVerifyResendOTP = async (data) => {
+    return HttpClient.post('/resend-otp', data);
+}
+const getForgotPasswordOTP = async (data) => {
+    return HttpClient.post('/forgot-password-otp-check', data);
+}
+const getREsetForgotPassword = async (data) => {
+    return HttpClient.post('/reset-password', data);
+}
 
 const AuthService = {
     getAccount,
@@ -76,7 +85,10 @@ const AuthService = {
     getCityList,
     getMaslakList,
     getUpdateRegProfile,
-    getForgotPasswordEmail
+    getForgotPasswordEmail,
+    getVerifyResendOTP,
+    getForgotPasswordOTP,
+    getREsetForgotPassword
 }
 
 export default AuthService;

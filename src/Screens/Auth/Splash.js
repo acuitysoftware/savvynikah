@@ -76,10 +76,10 @@ const Splash = ({ navigation }) => {
                 barStyle='dark-content'
                 translucent={true}
             />
-            <LinearGradient
-                start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }}
-                colors={['rgb(244, 247, 247)', 'rgb(243, 248, 255)']}
-                locations={[0.1, 1]}
+            <View
+                // start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }}
+                // colors={['rgb(244, 247, 247)', 'rgb(243, 248, 255)']}
+                // locations={[0.1, 1]}
                 style={styles.gradient_view}
             >
 
@@ -87,7 +87,7 @@ const Splash = ({ navigation }) => {
                     <Image source={require('../../assets/images/logo.png')} style={styles.logo_sty} />
                 </Animated.View>
 
-            </LinearGradient>
+            </View>
         </View>
     );
 };
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: height,
         width: width,
+        backgroundColor:'#fff'
     },
     logo_sty: {
         height: moderateScale(250),

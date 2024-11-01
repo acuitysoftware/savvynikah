@@ -28,15 +28,14 @@ const ForgotEmail = ({ navigation }) => {
           return;
       }
       let data = {
-          "email": email,
+          "phone": email,
       };
       setBtnLoader(true);
       console.log('resssssssssssdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', data);
       AuthService.getForgotPasswordEmail(data)
           .then((res) => {
-            console.log('mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',res);
-            
-              if (res && res.status === true) {
+            console.log('mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx============',res);
+              if (res && res.success == true) {
                   setBtnLoader(false);
                   Toast.show('An OTP has been sent to your verified email address.')
                   NavigationService.navigate('ForgotOTP',{getEmail:res?.data})      
@@ -56,17 +55,18 @@ const ForgotEmail = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Header title='Verify-Email' />
-      <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter your Email Id to set Password</Text>
+      <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter your Phone Number to set Password</Text>
       <Card style={{ ...styles.card_sty, backgroundColor: colors.cardColor }}>
-        <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Enter Your Email Id</Text>
+        <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Enter Your Phone Number</Text>
         <View style={{ ...styles.phoneinput_view, borderColor: colors.borderColor }}>
           <TextInput
             style={{ ...styles.inputcontainer_sty, color: colors.secondaryFontColor }}
-            keyboardType='email-address'
-            placeholder='Email Id'
+            keyboardType='phone-pad'
+            placeholder='Phone Number'
             placeholderTextColor={colors.secondaryFontColor}
             value={email}
             onChangeText={(val) => setEmail(val)}
+            maxLength={10}
           />
         </View>
 

@@ -5,44 +5,39 @@ import { moderateScale } from '../../Constants/PixelRatio';
 import { useTheme } from 'react-native-basic-elements';
 
 const { height, width } = Dimensions.get('screen');
-const PreferencesCard = () => {
+const PreferencesCard = ({userProfileData}) => {
     const colors = useTheme();
     return (
         <View style={styles.container}>
             <Text style={{ ...styles.Presonal_txt, color: colors.secondaryFontColor }}>Preferences</Text>
 
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Name</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Jhon Doe</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Address</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.address}</Text>
             </View>
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Age</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>25 Years</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>State</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.state?.name}</Text>
             </View>
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Gender</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Male</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>City</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.city?.name}</Text>
+            </View>
+
+            <View style={styles.name_view}>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>PIN</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.pin}</Text>
             </View>
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Height</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>5ft 7in</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Hobby</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.hobby}</Text>
             </View>
             <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Weight</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>67 kg</Text>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Habbit</Text>
+                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{userProfileData?.habits}</Text>
             </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Status</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Single</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>Language</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>Hindi,English</Text>
-            </View>
-            <View style={styles.name_view}>
-                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>DOB</Text>
-                <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>17 May 2002</Text>
-            </View>
+
+         
         </View>
     );
 };
@@ -61,7 +56,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: moderateScale(7),
         paddingBottom: moderateScale(5),
-        width: width - moderateScale(120),
+        width: width - moderateScale(100),
     },
     name_txt: {
         fontFamily: FONTS.Inter.regular,

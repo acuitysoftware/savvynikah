@@ -23,12 +23,14 @@ const Login = ({ navigation }) => {
             return;
         }
         let data = {
-            "email": email,
+            "phone": email,
         };
         setBtnLoader(true);
         console.log('resssssssssssdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', data);
         AuthService.getlogin(data)
             .then((res) => {
+                console.log('loggggggggggggggggggggggggggg',res);
+                
                 if (res && res.status === true) {
                     setBtnLoader(false);
                     Toast.show('An OTP has been sent to your verified email address.')
@@ -52,15 +54,16 @@ const Login = ({ navigation }) => {
             <KeyboardAwareScrollView>
                 <Image source={require('../../assets/images/rickshaw.png')} style={styles.logoimg_sty} />
                 <Card style={{ ...styles.card_sty, backgroundColor: colors.cardColor }}>
-                    <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Enter Your Email Id</Text>
+                    <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Enter Your Phone Number</Text>
                     <View style={{ ...styles.phoneinput_view, borderColor: colors.borderColor }}>
                         <TextInput
                             style={{ ...styles.inputcontainer_sty, color: colors.secondaryFontColor }}
-                            keyboardType='email-address'
-                            placeholder='Email Id'
+                            keyboardType='phone-pad'
+                            placeholder='Phone Number'
                             placeholderTextColor={colors.secondaryFontColor}
                             value={email}
                             onChangeText={(val) => setEmail(val)}
+                            maxLength={10}
                         />
                     </View>
 

@@ -11,17 +11,19 @@ import NavigationService from '../../../Services/Navigation';
 import { useRoute } from '@react-navigation/native';
 import SinglePicker from '../../../ui/SinglePicker';
 import Toast from "react-native-simple-toast";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setuser } from '../../../Redux/reducer/User';
 import Modal from "react-native-modal";
 import Congrats from '../../../Components/CongratsCard/Congrats';
 import SingleSelectPicker from '../../../ui/SingleSelectPicker';
 import AuthService from '../../../Services/Auth';
+import HomeService from '../../../Services/HomeServises';
 
 const { height, width } = Dimensions.get('screen')
 // create a component
 const OtherInfo = ({ navigation }) => {
     const dispatch = useDispatch()
+    const { userData } = useSelector(state => state.User)
     const colors = useTheme();
     const route = useRoute()
     const getOtherInfo = route.params.OtherInfoData
@@ -80,6 +82,33 @@ const OtherInfo = ({ navigation }) => {
         setModalVisible(!isModalVisible);
     };
 
+    const [userProfileData, setUserProfileData] = useState([])
+    useEffect(() => {
+        geUserFullProfile()
+    }, [])
+
+    const geUserFullProfile = () => {
+        let data = {
+            "user_id": userData.id,
+        };
+        HomeService.getuserFullData(data)
+            .then((res) => {
+                console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
+                if (res && res.success === true) {
+                    setUserProfileData(res.data);
+                    setAddress(res?.data?.address)
+                    setPinCode(res?.data?.pin)
+                    setHobby(res?.data?.hobby)
+                    setHabbit(res?.data?.habits)
+                    setAbout(res?.data?.description)
+                }
+            })
+            .catch((err) => {
+                console.log('errrr', err);
+
+            })
+    }
+
 
     useEffect(() => {
         getStatetData()
@@ -122,44 +151,44 @@ const OtherInfo = ({ navigation }) => {
 
 
     const getUpdateProfile = (() => {
-        let hasError = false;
-        if (address === '') {
-            Toast.show('Please Enter address');
-            hasError = true;
-            return false;
-        }
-        if (stateId === '') {
-            Toast.show('Please Select State');
-            hasError = true;
-            return false;
-        }
-        if (cityId === '') {
-            Toast.show('Please Select City');
-            hasError = true;
-            return false;
-        }
-        if (pinCode === '') {
-            Toast.show('Please Enter Pin');
-            hasError = true;
-            return false;
-        }
-        if (hobby === '') {
-            Toast.show('Please Enter Hobbies');
-            hasError = true;
-            return false;
-        }
-        if (habbit === '') {
-            Toast.show('Please Enter Habbits');
-            hasError = true;
-            return false;
-        }
-        if (about === '') {
-            Toast.show('Please Enter About Yourself');
-            hasError = true;
-            return false;
-        }
+        // let hasError = false;
+        // if (address === '') {
+        //     Toast.show('Please Enter address');
+        //     hasError = true;
+        //     return false;
+        // }
+        // if (stateId === '') {
+        //     Toast.show('Please Select State');
+        //     hasError = true;
+        //     return false;
+        // }
+        // if (cityId === '') {
+        //     Toast.show('Please Select City');
+        //     hasError = true;
+        //     return false;
+        // }
+        // if (pinCode === '') {
+        //     Toast.show('Please Enter Pin');
+        //     hasError = true;
+        //     return false;
+        // }
+        // if (hobby === '') {
+        //     Toast.show('Please Enter Hobbies');
+        //     hasError = true;
+        //     return false;
+        // }
+        // if (habbit === '') {
+        //     Toast.show('Please Enter Habbits');
+        //     hasError = true;
+        //     return false;
+        // }
+        // if (about === '') {
+        //     Toast.show('Please Enter About Yourself');
+        //     hasError = true;
+        //     return false;
+        // }
 
-        if (hasError) return;
+        // if (hasError) return;
         let data = {
             "name": getOtherInfo?.name,
             "dob": getOtherInfo?.dob,
@@ -191,14 +220,9 @@ const OtherInfo = ({ navigation }) => {
             .then((res) => {
                 console.log('Signup successful========================================', res);
                 if (res && res.status == true) {
-                    setModalVisible(true);
-                    setTimeout(() => {
-                        setModalVisible(false);
-                        Toast.show(res.message)
-                        AuthService.setAccount(res.data);
-                        dispatch(setuser(res.data));
-                    }, 3000);
+                    NavigationService.navigate('Home')
                     setBtnLoader(false);
+                    Toast.show(res.message)
                 } else {
                     setBtnLoader(false)
                     Toast.show(res.message)
@@ -249,25 +273,6 @@ const OtherInfo = ({ navigation }) => {
                         </View>
                     </View>
 
-                    {/* <View style={styles.inputbox_view}>
-                        <View>
-                            <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Address</Text>
-                            <AppTextInput
-                                inputContainerStyle={{ ...styles.inputcontainer_sty }}
-                                inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
-                                value={address}
-                                onChangeText={(val) => setAddress(val)}
-                            />
-                        </View>
-                        <View>
-                            <Text style={{ ...styles.input_title, color: colors.secondaryFontColor }}>Select State</Text>
-                            <SinglePicker
-                                data={stateData}
-                                placeholder="Select State"
-                                onSelectItem={handleStateItem}
-                            />
-                        </View>
-                    </View> */}
 
                     <View style={styles.inputbox_view}>
                         <View>
@@ -341,7 +346,7 @@ const OtherInfo = ({ navigation }) => {
                             <AppTextInput
                                 multiline={true}
                                 numberOfLines={4}
-                                inputContainerStyle={{ ...styles.aboutinputcontainer_sty,height:moderateScale(90) }}
+                                inputContainerStyle={{ ...styles.aboutinputcontainer_sty, height: moderateScale(90) }}
                                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
                                 value={about}
                                 onChangeText={(val) => setAbout(val)}
@@ -385,19 +390,6 @@ const OtherInfo = ({ navigation }) => {
 
             </KeyboardAwareScrollView>
 
-            <Modal
-                isVisible={isModalVisible}
-                // backdropOpacity={1}
-                style={{
-                    margin: 0,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <View style={styles.modalView}>
-                    <Congrats />
-                </View>
-            </Modal>
         </View>
     );
 };
