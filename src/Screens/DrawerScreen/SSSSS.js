@@ -8,26 +8,23 @@ import { moderateScale } from '../../Constants/PixelRatio';
 import { FONTS } from '../../Constants/Fonts';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
-import { Image } from 'react-native';
 
 
-const SingleChatScreen = () => {
+const SingleChatScreennnn = () => {
     const colors = useTheme();
-    const route = useRoute()
-    const chatUserData = route.params.userIdData;
+    const route = useRoute();
+    // const { userId, recipientId, UserName, reciever_user_name } = route.params;
+    const chatUserData = route.params.userId;
     const MyChatId = route.params.MyId;
     const MyChatname = route.params.Myname;
 
-    console.log("MyChatId:", MyChatId);
-    console.log("chatUserData.id:==============================", chatUserData?.id);
 
-
-    const [messagesList, setMessages] = useState([]);
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        const chatId = `${MyChatId}-${ chatUserData.id}`;
-        console.log("chatId:===================", chatId); // Debugging chatId
-        console.log("userId:=====================", MyChatId, "recipientId:",  chatUserData.id); // Confirm IDs
+        const chatId = `${userId}-${recipientId}`;
+        console.log("chatId:", chatId); // Debugging chatId
+        console.log("userId:", userId, "recipientId:", recipientId); // Confirm IDs
 
         const unsubscribe = firestore()
             .collection('Chats')
@@ -37,12 +34,12 @@ const SingleChatScreen = () => {
             .onSnapshot((querySnapshot) => {
                 const messagesFirestore = querySnapshot.docs.map(doc => {
                     const firebaseData = doc.data();
-                    console.log("Message from Firestore:====================55555555555555555555", firebaseData); 
+                    console.log("Message from Firestore:", firebaseData); 
 
                     const data = {
                         _id: doc.id,
                         text: firebaseData.text,
-                        createdAt: firebaseData.createdAt ? firebaseData.createdAt.toDate() : new Date(),
+                        createdAt: firebaseData.createdAt.toDate(),
                         user: firebaseData.user,
                     };
     
@@ -53,14 +50,14 @@ const SingleChatScreen = () => {
             }, (error) => console.error("onSnapshot error:", error)); // Log any errors
     
         return () => unsubscribe();
-    }, [MyChatId,  chatUserData.id]);
+    }, [userId, recipientId]);
     
 
     const onSend = useCallback((newMessages = []) => {
         const text = newMessages[0]?.text;
-        const chatId = `${MyChatId}-${ chatUserData.id}`;
+        const chatId = `${userId}-${recipientId}`;
         
-        console.log("Sending message:====================", text); 
+        console.log("Sending message:", text); 
         
         if (text) {
             firestore()
@@ -79,8 +76,67 @@ const SingleChatScreen = () => {
         }
 
         setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
-    }, [MyChatId,  chatUserData.id, MyChatname]);
+    }, [MyChatId, recipientId, MyChatname]);
 
+
+    // useEffect(() => {
+    //     const chatId = `${MyChatId}-${ chatUserData.id}`;
+    //     console.log("chatId:===================", chatId); // Debugging chatId
+    //     console.log("userId:=====================", MyChatId, "recipientId:",  chatUserData.id); // Confirm IDs
+
+    //     const unsubscribe = firestore()
+    //         .collection('Chats')
+    //         .doc(chatId)
+    //         .collection('Messages')
+    //         .orderBy('createdAt', 'desc')
+    //         .onSnapshot((querySnapshot) => {
+    //             const messagesFirestore = querySnapshot.docs.map(doc => {
+    //                 const firebaseData = doc.data();
+    //                 console.log("Message from Firestore:====================55555555555555555555", firebaseData); 
+
+    //                 // const data = {
+    //                 //     _id: doc.id,
+    //                 //     text: firebaseData.text,
+    //                 //     createdAt: firebaseData.createdAt.toDate(),
+    //                 //     user: firebaseData.user,
+    //                 // };
+    
+    //                 // return data;
+    //             });
+    
+    //             setMessages(messagesFirestore);
+    //         }, (error) => console.error("onSnapshot error:", error)); // Log any errors
+    
+    //     return () => unsubscribe();
+    // }, [MyChatId, chatUserId]);
+    
+
+    // const onSend = useCallback((newMessages = []) => {
+    //     const text = newMessages[0]?.text;
+    //     const chatId = `${MyChatId}-${ chatUserData.id}`;
+        
+    //     console.log("Sending message:", text); 
+        
+    //     if (text) {
+    //         firestore()
+    //             .collection('Chats')
+    //             .doc(chatId)
+    //             .collection('Messages')
+    //             .add({
+    //                 text,
+    //                 createdAt: firestore.FieldValue.serverTimestamp(),
+    //                 user: {
+    //                     _id: MyChatId,
+    //                     name: MyChatname,
+    //                 },
+    //             })
+    //             .catch((error) => console.error("Error adding message:", error)); // Log Firestore errors
+    //     }
+
+    //     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
+    // }, [MyChatId,  chatUserData.id, MyChatname]);
+
+    
 
     const renderBubble = (props) => {
         return (
@@ -113,14 +169,14 @@ const SingleChatScreen = () => {
     return (
         <View style={[styles.container, { backgroundColor: colors.chatScreen }]}>
             <GiftedChat
-                messages={messagesList}
-                onSend={(val) => onSend(val)}
+                messages={messages}
+                onSend={(messages) => onSend(messages)}
                 user={{ _id: MyChatId }}
                 renderBubble={renderBubble}
                 renderSend={(props) => (
                     <Send {...props}>
                         <View style={styles.sendButton}>
-                            <Image source={Image.resolveAssetSource(require('../../assets/images/send.png'))} style={styles.sendimg} />
+                            <Icon name="send" type="Feather" color={colors.primaryFontColor} />
                         </View>
                     </Send>
                 )}
@@ -162,14 +218,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: moderateScale(5),
-        backgroundColor: 'green',
+        backgroundColor: 'red',
         marginBottom: moderateScale(4),
     },
-    sendimg: {
-        height: moderateScale(25),
-        width: moderateScale(25),
-        tintColor:'#fff'
-    }
 });
 
-export default SingleChatScreen;
+export default SingleChatScreennnn;

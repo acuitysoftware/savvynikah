@@ -13,26 +13,21 @@ import { useSelector } from 'react-redux';
 const ChatListCard = ({ item, index }) => {
     const colors = useTheme();
     const { userData } = useSelector(state => state.User)
-    console.log('itemmmmmmmmmmmmmchat', item);
+    console.log('itemmmmmmmmmmmmmchat======================', item.id);
+    console.log('itemmmmmmmmmmmmmchat===========0000000======rrrrrrrrrrrrrrrrrr=====', userData.id, userData.name);
 
-    // onPress={() => navigation.navigate('ChatDetails', 
-    //     {reciever_user_name: data.item.first_name,
-    //         user: data.item,
-    //          userId: userData.id, 
-    //          recipientId: data.item.id, 
-    //          UserName:  userData.name })} 
 
     return (
         <TouchableOpacity
 
             key={index}
-            // onPress={() => NavigationService.navigate('SingleChatScreen', {
-            //     reciever_user_name: item.first_name,
-            //     user: item,
-            //     userId: userData.id,
-            //     recipientId: item.id,
-            //     UserName: userData.name
-            // })}
+            // onPress={() => NavigationService.navigate('SingleChatScreen')}
+            onPress={() => NavigationService.navigate('SingleChatScreen', {
+                userIdData: item,
+                userId: item.id,
+                MyId: userData.id,
+                Myname: userData.name
+            })}
             style={{ ...styles.container, backgroundColor: colors.secondaryThemeColor }}>
             <Image
                 source={item?.profile_images?.length > 0 && item.profile_images[0]?.url ?

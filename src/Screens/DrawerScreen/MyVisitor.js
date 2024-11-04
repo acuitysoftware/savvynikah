@@ -72,6 +72,7 @@ const MyVisitor = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginHorizontal:0
     },
     loaderContainer: {
         flex: 1,

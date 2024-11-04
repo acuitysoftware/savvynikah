@@ -89,7 +89,8 @@ const MyChat = () => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        marginHorizontal:0
     },
     noDataView: {
         justifyContent: 'center',

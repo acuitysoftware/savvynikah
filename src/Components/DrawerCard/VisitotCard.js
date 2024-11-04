@@ -22,7 +22,7 @@ const VisitorCard = ({ item, index }) => {
             key={index} style={styles.container}>
 
             <Image
-                source={item?.profile_images?.length > 0 ? { uri: item?.profile_images[0]?.image_path } :
+                source={item?.profile_images?.length > 0 ? { uri: item?.profile_images[0]?.url } :
                     require('../../assets/images/user.png')}
                 style={styles.user_img} />
 
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderRadius: moderateScale(7),
         marginTop: moderateScale(10),
-        marginHorizontal: moderateScale(10)
+        // marginHorizontal: moderateScale(10)
     },
     user_img: {
         height: moderateScale(65),

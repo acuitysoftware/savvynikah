@@ -117,9 +117,9 @@ const Signup = ({ navigation }) => {
     };
     
     const handleSignup = async () => {
-        const isSignupValid = await getsignup(); // Check if validation and signup pass
+        const isSignupValid = await getsignup(); 
         if (isSignupValid) {
-            registerUser(); // Call registerUser only if signup was successful
+            registerUser(); 
         }
     };
 
