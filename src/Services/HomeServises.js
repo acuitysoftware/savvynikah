@@ -78,6 +78,9 @@ const getUpdateRegProfile = async (data) => {
 const getChangePassword = async (data) => {
     return HttpClient.post('/change-password', data);
 }
+const getUserProfile = async (data) => {
+    return HttpClient.post('/user', data);
+}
 
 const HomeService = {
     getAccount,
@@ -104,7 +107,8 @@ const HomeService = {
     getCityList,
     getMaslakList,
     getUpdateRegProfile,
-    getChangePassword
+    getChangePassword,
+    getUserProfile
 }
 
 export default HomeService;

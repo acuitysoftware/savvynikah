@@ -88,13 +88,10 @@ const OtherInfo = ({ navigation }) => {
     }, [])
 
     const geUserFullProfile = () => {
-        let data = {
-            "user_id": userData.id,
-        };
-        HomeService.getuserFullData(data)
+        HomeService.getUserProfile()
             .then((res) => {
                 console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
-                if (res && res.success === true) {
+                if (res && res.status === true) {
                     setUserProfileData(res.data);
                     setAddress(res?.data?.address)
                     setPinCode(res?.data?.pin)

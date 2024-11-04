@@ -6,10 +6,27 @@ import { moderateScale } from '../../Constants/PixelRatio';
 import { FONTS } from '../../Constants/Fonts';
 import Resiver from '../../Components/ChatComponent/Resiver';
 import Sender from '../../Components/ChatComponent/Sender';
+import { useRoute } from '@react-navigation/native';
 
 // create a component
 const SingleChatScreen = () => {
     const colors = useTheme();
+    const route = useRoute
+  const userId = route.params.userId;
+  const recipientId = route.params.recipientId;
+  const user = route.params.user;
+  const UserName = route.params.UserName;
+  const reciever_user_name = route.params.reciever_user_name;
+  const [status,setstatus] = useState(null);
+  const [deleteHistory, setDeleteHistory] = useState(false);
+
+  const deleteMsg = () => {
+      setDeleteHistory(true);
+  }
+
+  const updateDeleteHistoryStatus = () => {
+    setDeleteHistory(false);
+  }
 
     const chatData = [
         {
@@ -48,6 +65,7 @@ const SingleChatScreen = () => {
         },
 
     ]
+
     return (
         <View style={{ ...styles.container, backgroundColor: colors.chatScreen }}>
             <ScrollView showsVerticalScrollIndicator={false}>

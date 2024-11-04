@@ -10,6 +10,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import NavigationService from '../../Services/Navigation';
 import AuthService from '../../Services/Auth';
 import Toast from "react-native-simple-toast";
+import firestore from '@react-native-firebase/firestore';
+import uuid from 'react-native-uuid';
 
 // create a component
 const Signup = ({ navigation }) => {
@@ -22,81 +24,104 @@ const Signup = ({ navigation }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [btnLoader, setBtnLoader] = useState(false);
 
-    const getsignup = (() => {
+
+    const getsignup = () => {
         let hasError = false;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^[6-9]\d{9}$/;
+    
         if (name === '') {
-            Toast.show('Please enter  Name');
+            Toast.show('Please enter Name');
             hasError = true;
-            return false;
         }
-
+    
         if (phone === '') {
             Toast.show('Please enter Phone Number');
             hasError = true;
-            return false;
         } else if (!phoneRegex.test(phone)) {
             Toast.show('Please enter a valid Phone Number');
             hasError = true;
-            return false;
         }
-
+    
         if (email === '') {
             Toast.show('Please enter Email Id');
             hasError = true;
-            return false;
         } else if (!emailRegex.test(email)) {
             Toast.show('Please enter a valid Email Id');
             hasError = true;
-            return false;
         }
-
+    
         if (password === '') {
             Toast.show('Please enter password');
-
             hasError = true;
-            return false
         } else if (password.length < 6) {
             Toast.show('Password must be at least 6 characters');
-
             hasError = true;
-            return false
         }
+    
         if (!check) {
-            Toast.show('Please Click Check Box', Toast.SHORT);
+            Toast.show('Please Click Check Box');
             hasError = true;
-            return false;
         }
-
-        if (hasError) return;
-
-        let data = {
-            "name": name,
-            "email": email,
-            "phone": phone,
-            "password": password,
-        }
-        setBtnLoader(true)
-        console.log('Signup data:====================', data);
-        AuthService.getregister(data)
+    
+        if (hasError) return false;
+    
+        const data = {
+            name,
+            email,
+            phone,
+            password,
+        };
+        setBtnLoader(true);
+        console.log('Signup data:=============================', data);
+        return AuthService.getregister(data)
             .then((res) => {
-                console.log('Signup successful======================', res);
-                if (res && res.status == true) {
-                    setBtnLoader(false)
-                    Toast.show(res.message)
-                    NavigationService.navigate('EmailVerify', { regData: res?.data })
+                console.log('Signup successful:', res);
+                setBtnLoader(false);
+                if (res && res.status === true) {
+                    Toast.show(res.message);
+                    NavigationService.navigate('EmailVerify', { regData: res?.data });
+                    return true; 
                 } else {
-                    setBtnLoader(false)
-                    Toast.show(res.message)
+                    Toast.show(res.message);
+                    return false;
                 }
-                console.log('Signup successful======================', res);
             })
             .catch((err) => {
                 console.log('Signup error', err);
-                setBtnLoader(false)
+                setBtnLoader(false);
+                return false;
             });
-    });
+    };
+    
+    const registerUser = () => {
+        const userId = uuid.v4();
+        firestore()
+            .collection('Users')
+            .doc(userId)
+            .set({
+                name,
+                email,
+                phone,
+                password,
+                userId,
+            })
+            .then(() => {
+                console.log('User profile created successfully in Firebase');
+                Toast.show('User profile created successfully in Firebase');
+            })
+            .catch((err) => {
+                console.log('User profile was not created in Firebase:', err);
+                Toast.show('User profile was not created in Firebase');
+            });
+    };
+    
+    const handleSignup = async () => {
+        const isSignupValid = await getsignup(); // Check if validation and signup pass
+        if (isSignupValid) {
+            registerUser(); // Call registerUser only if signup was successful
+        }
+    };
 
 
     return (
@@ -186,7 +211,7 @@ const Signup = ({ navigation }) => {
                         gradientEnd={{ x: 1, y: 1 }}
                         gradient={true}
                         gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-                        onPress={() => getsignup()}
+                        onPress={() => handleSignup()}
                         loader={
                             btnLoader
                                 ? {
@@ -197,7 +222,7 @@ const Signup = ({ navigation }) => {
                                 : null
                         }
                         disabled={btnLoader}
-                        
+
                     />
 
                     {/* <AppButton

@@ -102,8 +102,8 @@ const ProfileListCard = ({ item, index }) => {
       </View>
 
       <Image
-        source={item?.profile_images?.length > 0 && item.profile_images[0]?.image_path ?
-          { uri: item.profile_images[0].image_path } :
+        source={item?.profile_images?.length > 0 && item.profile_images[0]?.url ?
+          { uri: item.profile_images[0].url } :
           require('../../assets/images/user.png')}
         style={styles.user_img}
       />

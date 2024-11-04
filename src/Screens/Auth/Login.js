@@ -10,6 +10,9 @@ import NavigationService from '../../Services/Navigation';
 import AuthService from '../../Services/Auth';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from "react-native-simple-toast";
+import firestore from '@react-native-firebase/firestore';
+import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // create a component
 const Login = ({ navigation }) => {
@@ -17,36 +20,61 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [btnLoader, setBtnLoader] = useState(false);
 
-    const getLogin = (() => {
-        if (email === '') {
+    
+    const loginUser = () => {
+        if (email.trim() === '') {
             Toast.show('Please enter Your Email');
             return;
         }
-        let data = {
-            "phone": email,
-        };
+
         setBtnLoader(true);
-        console.log('resssssssssssdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', data);
-        AuthService.getlogin(data)
-            .then((res) => {
-                console.log('loggggggggggggggggggggggggggg',res);
-                
-                if (res && res.status === true) {
+        
+        // Check if the user exists in Firestore
+        firestore()
+            .collection('Users')
+            .where("phone", "==", email)
+            .get()
+            .then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    Toast.show('User not found in');
                     setBtnLoader(false);
-                    Toast.show('An OTP has been sent to your verified email address.')
-                    NavigationService.navigate('Otp',{getEmail:res?.data})
-                   
-                } else {
-                    setBtnLoader(false);
-                    Toast.show(res.message);
+                    return;
                 }
+    
+                const userData = querySnapshot.docs[0].data();
+                console.log('User found in Firebase:', JSON.stringify(userData));
+    
+                // Call the AuthService to proceed with login
+                const data = { "phone": email };
+                console.log('Login data:', data);
+    
+                AuthService.getlogin(data)
+                    .then((res) => {
+                        setBtnLoader(false);
+                        if (res && res.status === true) {
+                            Toast.show('An OTP has been sent to your verified email address.');
+                            NavigationService.navigate('Otp', { getEmail: res?.data });
+                        } else {
+                            Toast.show(res.message);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log('Login error:', err);
+                        Toast.show('Failed to login. Please try again.');
+                        setBtnLoader(false);
+                    });
             })
             .catch((err) => {
-                console.log('emailverify==========================', err);
+                console.log('Firestore query error:', err);
+                Toast.show('Error checking user in Firebase.');
                 setBtnLoader(false);
             });
+    };
 
-    })
+//     const gotoNext =(name,phone,userId)=>{
+// AsyncStorage
+//     }
+    
 
     return (
         <View style={styles.container}>
@@ -91,7 +119,7 @@ const Login = ({ navigation }) => {
                         gradientEnd={{ x: 1, y: 1 }}
                         gradient={true}
                         gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-                        onPress={() => getLogin()}
+                        onPress={() => loginUser()}
                         loader={
                             btnLoader
                                 ? {

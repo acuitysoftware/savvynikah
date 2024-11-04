@@ -52,13 +52,13 @@ const Home = () => {
             "marital_status": filterData?.marital_status ?? null,
             "education_id": filterData?.education_id ?? null,
             "occupation_id": filterData?.occupation_id ?? null,
-            "min_height": filterData?.min_height ?? undefined,
-            "max_height": filterData?.max_height ?? undefined,
-            "min_age": filterData?.min_age ?? undefined,
-            "max_age": filterData?.max_age ?? undefined,
+            "min_height": filterData?.min_height ?? null,
+            "max_height": filterData?.max_height ?? null,
+            "min_age": filterData?.min_age ?? null,
+            "max_age": filterData?.max_age ?? null,
             "caste": filterData?.caste ?? null
         };
-        // console.log('filllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll+++++++++++++++++++++++++++', data);
+        console.log('filllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll+++++++++++++++++++++++++++', data);
 
         HomeService.getuserListNdFilterData(data)
             .then((res) => {

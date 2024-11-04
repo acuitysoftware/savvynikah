@@ -18,6 +18,8 @@ const DrawerCard = () => {
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.User)
     const [userProfileData, setUserProfileData] = useState([])
+    console.log('drawerttttttttttttttttttt',userData);
+    
 
     const drawerScreen = [
         {
@@ -84,13 +86,10 @@ const DrawerCard = () => {
     }, [])
 
     const geUserFullProfile = () => {
-        let data = {
-            "user_id": userData.id
-        };
-        HomeService.getuserFullData(data)
+        HomeService.getUserProfile()
             .then((res) => {
                 console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
-                if (res && res.success === true) {
+                if (res && res.status === true) {
                     setUserProfileData(res.data);
                 }
 
@@ -110,11 +109,11 @@ const DrawerCard = () => {
                     <Icon type='AntDesign' name='close' size={20} style={styles.icon_view} />
                 </Pressable>
                 <Pressable
-                    onPress={() => NavigationService.navigate('ViewProfile', { userId: userProfileData.id })}
+                    // onPress={() => NavigationService.navigate('ViewProfile', { userId: userProfileData.id })}
                     style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View style={styles.user_circle}>
                         <Image
-                            source={userProfileData?.profile_images?.length > 0 ? { uri: userProfileData?.profile_images[0]?.image_path } :
+                            source={userProfileData?.profile_images?.length > 0 ? { uri: userProfileData?.profile_images[0]?.url } :
                                 require('../../assets/images/user.png')}
                             style={styles.user_img_sty} />
 

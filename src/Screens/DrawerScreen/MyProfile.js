@@ -14,18 +14,18 @@ const MyProfile = () => {
     const colors = useTheme();
     const { userData } = useSelector(state => state.User)
     const [userProfileData, setUserProfileData] = useState([])
+    console.log('ggggggggggggggggggggggg',);
+    
     useEffect(() => {
         geUserFullProfile()
     }, [])
 
     const geUserFullProfile = () => {
-        let data = {
-            "user_id": userData.id
-        };
-        HomeService.getuserFullData(data)
+        
+        HomeService.getUserProfile()
             .then((res) => {
                 console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
-                if (res && res.success === true) {
+                if (res && res.status === true) {
                     setUserProfileData(res.data);
                 }
 
@@ -52,7 +52,7 @@ const MyProfile = () => {
         <View style={styles.container}>
             <View style={styles.user_view}>
                 <Image
-                    source={userProfileData?.profile_images?.length > 0 ? { uri: userProfileData?.profile_images[0]?.image_path } :
+                    source={userProfileData?.profile_images?.length > 0 ? { uri: userProfileData?.profile_images[0]?.url } :
                         require('../../assets/images/user.png')}
                     style={styles.user_img} />
                 {/* <Image source={require('../../assets/images/6dc01.png')} style={styles.user_img} /> */}

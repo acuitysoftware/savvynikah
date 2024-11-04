@@ -57,7 +57,7 @@ const ViewProfile = () => {
         setLoading(true);
         HomeService.getuserFullData(data)
             .then((res) => {
-                // console.log('Response from getuserFullData:', JSON.stringify(res));
+                console.log('Response from getuserFullData:===============================', JSON.stringify(res));
                 if (res && res.success === true) {
                     if (res.data) {
                         setUserProfileData(res.data);
@@ -98,7 +98,7 @@ const ViewProfile = () => {
                         {
                             userProfileData?.profile_images?.length === 1 ?
                                 <View style={{ height: height / 2.7 }}>
-                                    <Image source={{ uri: userProfileData?.profile_images?.image_path }} style={styles.bannerImg} />
+                                    <Image source={{ uri: userProfileData?.profile_images?.url }} style={styles.bannerImg} />
                                 </View>
                                 :
                                 <SwiperFlatList
@@ -116,7 +116,7 @@ const ViewProfile = () => {
                                     data={userProfileData?.profile_images}
                                     renderItem={({ item }) => (
                                         <View style={{ height: height / 2.7 }}>
-                                            <Image source={{ uri: item.image_path }} style={styles.bannerImg} />
+                                            <Image source={{ uri: item.url }} style={styles.bannerImg} />
                                         </View>
                                     )}
                                 />

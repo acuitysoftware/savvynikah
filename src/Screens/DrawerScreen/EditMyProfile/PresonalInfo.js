@@ -201,14 +201,13 @@ const PresonalInfo = ({ navigation }) => {
     geUserFullProfile()
   }, [])
 
+
   const geUserFullProfile = () => {
-    let data = {
-      "user_id": userData.id,
-    };
-    HomeService.getuserFullData(data)
+  
+    HomeService.getUserProfile()
       .then((res) => {
         console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
-        if (res && res.success === true) {
+        if (res && res.status === true) {
           setUserProfileData(res.data);
           setName(res?.data?.name)
           setSectorId(res?.data?.sect?.id)

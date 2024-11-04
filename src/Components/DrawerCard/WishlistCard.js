@@ -1,11 +1,12 @@
 //import liraries
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { moderateScale } from '../../Constants/PixelRatio';
 import { AppButton, Icon, useTheme } from 'react-native-basic-elements';
 import { FONTS } from '../../Constants/Fonts';
 import NavigationService from '../../Services/Navigation';
 import HomeService from '../../Services/HomeServises';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // create a component
 const WishlistCard = ({ item, index }) => {
@@ -14,27 +15,74 @@ const WishlistCard = ({ item, index }) => {
   const [isInWishlist, setIsInWishlist] = useState(false);
 
 
-  const toggleWishList = () => {
+  // const toggleWishList = () => {
+  //   const data = { "user_id": item.id };
+
+  //   if (isInWishlist) {
+  //     HomeService.getRemoveWislit(data)
+  //       .then((res) => {
+  //         console.log('Removed from wishlist9999999999999999', res);
+  //         setIsInWishlist(false);
+  //       })
+  //       .catch((err) => {
+  //         console.log('Error removing from wishlist-----------------', err);
+  //       });
+  //   } else {
+  //     HomeService.getAddWislit(data)
+  //       .then((res) => {
+  //         console.log('Added to wishlist=======', res);
+  //         setIsInWishlist(true);
+  //       })
+  //       .catch((err) => {
+  //         console.log('Error adding to wishlist>>>>>>>>>>', err);
+  //       });
+  //   }
+  // };
+
+
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      try {
+        const wishlist = await AsyncStorage.getItem('wishlist');
+        const parsedWishlist = JSON.parse(wishlist) || [];
+        setIsInWishlist(parsedWishlist.includes(item.id)); 
+      } catch (error) {
+        console.log('Error fetching wishlist status:', error);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [item.id]);
+
+  const toggleWishList = async () => {
     const data = { "user_id": item.id };
 
-    if (isInWishlist) {
-      HomeService.getRemoveWislit(data)
-        .then((res) => {
-          console.log('Removed from wishlist9999999999999999', res);
-          setIsInWishlist(false);
-        })
-        .catch((err) => {
-          console.log('Error removing from wishlist-----------------', err);
-        });
-    } else {
-      HomeService.getAddWislit(data)
-        .then((res) => {
-          console.log('Added to wishlist=======', res);
-          setIsInWishlist(true);
-        })
-        .catch((err) => {
-          console.log('Error adding to wishlist>>>>>>>>>>', err);
-        });
+    try {
+      if (isInWishlist) {
+        // Remove from wishlist
+        await HomeService.getRemoveWislit(data);
+        console.log('Removed from wishlist');
+        setIsInWishlist(false);
+        
+        // Update wishlist in AsyncStorage
+        const wishlist = await AsyncStorage.getItem('wishlist');
+        const parsedWishlist = JSON.parse(wishlist) || [];
+        const updatedWishlist = parsedWishlist.filter(id => id !== item.id);
+        await AsyncStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+
+      } else {
+        // Add to wishlist
+        await HomeService.getAddWislit(data);
+        console.log('Added to wishlist');
+        setIsInWishlist(true);
+
+        // Update wishlist in AsyncStorage
+        const wishlist = await AsyncStorage.getItem('wishlist');
+        const parsedWishlist = JSON.parse(wishlist) || [];
+        await AsyncStorage.setItem('wishlist', JSON.stringify([...parsedWishlist, item.id]));
+      }
+    } catch (error) {
+      console.log('Error toggling wishlist:', error);
     }
   };
 
@@ -56,7 +104,7 @@ const WishlistCard = ({ item, index }) => {
       </View>
 
       <Image
-        source={item?.profile_images?.length > 0 ? { uri: item?.profile_images[0]?.image_path } :
+        source={item?.profile_images?.length > 0 ? { uri: item?.profile_images[0]?.url } :
           require('../../assets/images/user.png')}
         style={styles.user_img} />
       <View style={{
