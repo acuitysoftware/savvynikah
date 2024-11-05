@@ -41,7 +41,7 @@ const HomeHeader = ({ route }) => {
             case 'GetPremium':
                 return 'Get Premium';
             case 'PaymentSucess':
-                    return 'Payment Sucess';
+                return 'Payment Sucess';
             default:
                 return 'App';
         }
@@ -57,7 +57,7 @@ const HomeHeader = ({ route }) => {
             <View style={styles.secondary_view}>
                 {
                     route.name === 'SingleChatScreen' ?
-                        <TouchableOpacity onPress={() => NavigationService.goBack()}>
+                        <TouchableOpacity onPress={() => NavigationService.navigate('MyChat')}>
                             <Icon name="arrowleft" type="AntDesign" />
                         </TouchableOpacity>
                         :
@@ -67,7 +67,14 @@ const HomeHeader = ({ route }) => {
 
                 }
                 <Text style={styles.header_txt}>{getHeaderTitle(route.name)}</Text>
-                <Icon name="bell" type="Feather" />
+                {
+                    route.name === 'SingleChatScreen' ?
+                        <Icon name="bell" type="Feather" color={Colors.buttonColor} />
+                        :
+                        <Icon name="bell" type="Feather" />
+
+                }
+
             </View>
         </View>
     );

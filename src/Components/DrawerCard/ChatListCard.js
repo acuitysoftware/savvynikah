@@ -35,10 +35,13 @@ const ChatListCard = ({ item, index }) => {
                     require('../../assets/images/user.png')}
                 style={styles.user_img}
             />
-            {/* <Image source={require('../../assets/images/6dc01.png')} style={styles.user_img}/> */}
             <View style={{ marginLeft: moderateScale(10) }}>
                 <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{item.full_name}</Text>
-                {/* <Text style={{...styles.message_txt,color:colors.light_txt}}>Hello</Text> */}
+                <Text
+                numberOfLines={1}
+                style={{ ...styles.message_txt, color: colors.light_txt }}>
+                    {item.lastMessageText || null}
+                </Text>
 
             </View>
         </TouchableOpacity>
@@ -67,7 +70,8 @@ const styles = StyleSheet.create({
     message_txt: {
         fontFamily: FONTS.Inter.regular,
         fontSize: moderateScale(12),
-        marginTop: moderateScale(10)
+        marginTop: moderateScale(5),
+        width:moderateScale(250),
     }
 });
 

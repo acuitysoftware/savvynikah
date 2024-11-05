@@ -17,8 +17,7 @@ const DrawerCard = () => {
     const colors = useTheme();
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.User)
-    const [userProfileData, setUserProfileData] = useState([])
-    console.log('drawerttttttttttttttttttt',userData);
+    const [userProfileData, setUserProfileData] = useState([])    
     
 
     const drawerScreen = [
@@ -88,7 +87,6 @@ const DrawerCard = () => {
     const geUserFullProfile = () => {
         HomeService.getUserProfile()
             .then((res) => {
-                console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
                 if (res && res.status === true) {
                     setUserProfileData(res.data);
                 }

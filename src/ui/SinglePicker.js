@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-basic-elements';
 
-const SinglePicker = ({ data, placeholder, onSelectItem }) => {
+const SinglePicker = ({ data, placeholder, onSelectItem, defaultSelected }) => {
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(defaultSelected || null);
+
+  console.log('datttttttttttttttttttttttttttttttttttt',data);
+  
+
+  useEffect(() => {
+    // Update selected item if defaultSelected changes
+    if (defaultSelected) {
+      setSelectedItem(defaultSelected);
+    }
+  }, [defaultSelected]);
 
   const handleItemSelect = (item) => {
     setSelectedItem(item);  
@@ -12,7 +22,7 @@ const SinglePicker = ({ data, placeholder, onSelectItem }) => {
     if (onSelectItem) {
       onSelectItem(item);  
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -31,8 +41,8 @@ const SinglePicker = ({ data, placeholder, onSelectItem }) => {
             <FlatList
               data={data}
               keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.optionItem} onPress={() => handleItemSelect(item)}>
+              renderItem={({ item,index }) => (
+                <TouchableOpacity key={index} style={styles.optionItem} onPress={() => handleItemSelect(item)}>
                   <Text style={styles.optionText}>{item.name}</Text>
                 </TouchableOpacity>
               )}

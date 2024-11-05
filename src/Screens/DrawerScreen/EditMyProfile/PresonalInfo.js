@@ -189,6 +189,8 @@ const PresonalInfo = ({ navigation }) => {
   };
 
   const [sectorData, setSectorData] = useState([])
+  console.log('sectorDatasectorDatasectorData================================================',sectorData);
+  
   const [sectorId, setSectorId] = useState(null);
   const [sectorName, setSectorName] = useState(null);
 
@@ -206,10 +208,11 @@ const PresonalInfo = ({ navigation }) => {
   
     HomeService.getUserProfile()
       .then((res) => {
-        console.log('-------------------------------------------------profile---------------------', JSON.stringify(res));
+        console.log('-------------------------------------------------profile-------fatchhhhhh--------------', JSON.stringify(res));
         if (res && res.status === true) {
           setUserProfileData(res.data);
           setName(res?.data?.name)
+          setSectorData(res?.data?.sect)
           setSectorId(res?.data?.sect?.id)
           setCastId(res?.data?.caste)
           setDob(res?.data?.sect?.dob)
@@ -317,59 +320,7 @@ const PresonalInfo = ({ navigation }) => {
   console.log('castttttttttttttttttttttt', ImageData)
 
   const getPersonalInfo = () => {
-    // let hasError = false;
-    // if (ImageData === " " || (Array.isArray(ImageData) && ImageData.length === 0)) {
-    //   Toast.show('Please Upload Your Images');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (name === '') {
-    //   Toast.show('Please enter  Name');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (sectorId === '') {
-    //   Toast.show('Please Select Sector');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (castId === '') {
-    //   Toast.show('Please Select Cast');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (dob === '') {
-    //   Toast.show('Choose your DBO');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (genderId === '') {
-    //   Toast.show('Please Select Gender');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (height === '') {
-    //   Toast.show('Please Enter Height');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (weight === '') {
-    //   Toast.show('Please Enter Weight');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (AgeData === '') {
-    //   Toast.show('Please Select Age');
-    //   hasError = true;
-    //   return false;
-    // }
-    // if (maslakId === '') {
-    //   Toast.show('Please Select MaslakId');
-    //   hasError = true;
-    //   return false;
-    // }
-
-    // if (hasError) return;
+   
     let data = {
       "name": name,
       "sector": sectorId,
@@ -432,7 +383,6 @@ const PresonalInfo = ({ navigation }) => {
                 inputStyle={{ ...styles.text_input, color: colors.secondaryFontColor }}
                 value={name}
                 onChangeText={(val) => setName(val)}
-              // editable={false}
               />
             </View>
             <View>

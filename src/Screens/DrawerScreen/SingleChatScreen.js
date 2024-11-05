@@ -18,7 +18,7 @@ const SingleChatScreen = () => {
     const MyChatId = route.params.MyId;
     const MyChatname = route.params.Myname;
 
-    console.log("MyChatId:", MyChatId);
+    console.log("MyChatId=========================", MyChatId);
     console.log("chatUserData.id:==============================", chatUserData?.id);
 
 
@@ -26,8 +26,8 @@ const SingleChatScreen = () => {
 
     useEffect(() => {
         const chatId = `${MyChatId}-${ chatUserData.id}`;
-        console.log("chatId:===================", chatId); // Debugging chatId
-        console.log("userId:=====================", MyChatId, "recipientId:",  chatUserData.id); // Confirm IDs
+        console.log("chatId:===================", chatId);
+        console.log("userId:=====================", MyChatId, "recipientId:",  chatUserData.id); 
 
         const unsubscribe = firestore()
             .collection('Chats')
@@ -50,7 +50,7 @@ const SingleChatScreen = () => {
                 });
     
                 setMessages(messagesFirestore);
-            }, (error) => console.error("onSnapshot error:", error)); // Log any errors
+            }, (error) => console.error("onSnapshot error:", error));
     
         return () => unsubscribe();
     }, [MyChatId,  chatUserData.id]);
@@ -75,7 +75,7 @@ const SingleChatScreen = () => {
                         name: MyChatname,
                     },
                 })
-                .catch((error) => console.error("Error adding message:", error)); // Log Firestore errors
+                .catch((error) => console.error("Error adding message:", error));
         }
 
         setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
@@ -137,7 +137,7 @@ const SingleChatScreen = () => {
                     <Composer
                         {...props}
                         textInputStyle={{
-                            color: colors.secondaryFontColor,  // Ensure text color contrasts background
+                            color: colors.secondaryFontColor, 
                             backgroundColor: colors.secondaryThemeColor,
                             borderRadius: moderateScale(25),
                             paddingLeft: moderateScale(10),
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
         marginBottom: moderateScale(4),
     },
     sendimg: {
-        height: moderateScale(25),
-        width: moderateScale(25),
+        height: moderateScale(20),
+        width: moderateScale(20),
         tintColor:'#fff'
     }
 });
