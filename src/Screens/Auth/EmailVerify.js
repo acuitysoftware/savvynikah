@@ -75,7 +75,7 @@ const EmailVerify = ({ navigation }) => {
 
     const resendOtp = () => {
         let data = { "phone":  RegAllData?.phone };
-        AuthService.resend-otp(data)
+        AuthService.getVerifyResendOTP(data)
             .then((res) => {
                 Toast.show('OTP resent successfully!');
                 startTimer();

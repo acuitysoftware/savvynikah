@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { AppButton, AppTextInput, Card, CheckBox, Icon, useTheme } from 'react-native-basic-elements';
 import Header from '../../Components/Header/Header';
 import { Image } from 'react-native';
@@ -13,6 +13,8 @@ import Toast from "react-native-simple-toast";
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
 
+
+const { height, width } = Dimensions.get('screen');
 // create a component
 const Signup = ({ navigation }) => {
     const colors = useTheme()
@@ -21,7 +23,9 @@ const Signup = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [phone, setPhone] = useState('')
     const [password, setPassword] = useState('')
+    const [cnfpassword, setCnfPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false);
+    const [CnfshowPassword, setCnfShowPassword] = useState(false);
     const [btnLoader, setBtnLoader] = useState(false);
 
 
@@ -29,12 +33,12 @@ const Signup = ({ navigation }) => {
         let hasError = false;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^[6-9]\d{9}$/;
-    
+
         if (name === '') {
             Toast.show('Please enter Name');
             hasError = true;
         }
-    
+
         if (phone === '') {
             Toast.show('Please enter Phone Number');
             hasError = true;
@@ -42,7 +46,7 @@ const Signup = ({ navigation }) => {
             Toast.show('Please enter a valid Phone Number');
             hasError = true;
         }
-    
+
         if (email === '') {
             Toast.show('Please enter Email Id');
             hasError = true;
@@ -50,22 +54,34 @@ const Signup = ({ navigation }) => {
             Toast.show('Please enter a valid Email Id');
             hasError = true;
         }
-    
+
         if (password === '') {
-            Toast.show('Please enter password');
+            Toast.show('Please enter Password');
             hasError = true;
+            return false
         } else if (password.length < 6) {
             Toast.show('Password must be at least 6 characters');
             hasError = true;
+            return false
         }
-    
+
+        if (cnfpassword === '') {
+            Toast.show('Please confirm your Password');
+            hasError = true;
+            return false
+        } else if (password !== cnfpassword) {
+            Toast.show('Passwords do not match');
+            hasError = true;
+            return false
+        }
+
         if (!check) {
             Toast.show('Please Click Check Box');
             hasError = true;
         }
-    
+
         if (hasError) return false;
-    
+
         const data = {
             name,
             email,
@@ -81,7 +97,7 @@ const Signup = ({ navigation }) => {
                 if (res && res.status === true) {
                     Toast.show(res.message);
                     NavigationService.navigate('EmailVerify', { regData: res?.data });
-                    return true; 
+                    return true;
                 } else {
                     Toast.show(res.message);
                     return false;
@@ -93,7 +109,7 @@ const Signup = ({ navigation }) => {
                 return false;
             });
     };
-    
+
     const registerUser = () => {
         const userId = uuid.v4();
         firestore()
@@ -115,11 +131,11 @@ const Signup = ({ navigation }) => {
                 Toast.show('User profile was not created in Firebase');
             });
     };
-    
+
     const handleSignup = async () => {
-        const isSignupValid = await getsignup(); 
+        const isSignupValid = await getsignup();
         if (isSignupValid) {
-            registerUser(); 
+            registerUser();
         }
     };
 
@@ -172,24 +188,55 @@ const Signup = ({ navigation }) => {
                         keyboardType='number-pad'
                     />
 
-                    <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Password</Text>
-                    <View style={{ ...styles.passwordinput_view, borderColor: colors.borderColor }}>
+                    <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>New Password</Text>
+                    <View style={{
+                        ...styles.Password_Input_view, backgroundColor: colors.inputColor,
+                        borderColor: colors.borderColor
+                    }}>
                         <TextInput
-                            style={{ ...styles.password_sty, color: colors.secondaryFontColor }}
-                            keyboardType='email-address'
-                            placeholderTextColor={colors.secondaryFontColor}
-                            placeholder='Enter Password'
-                            secureTextEntry={!showPassword}
                             value={password}
                             onChangeText={(val) => setPassword(val)}
+                            placeholder='Password'
+                            placeholderTextColor={colors.secondaryFontColor}
+                            style={{ ...styles.passwordInputcontainer_sty, backgroundColor: colors.tintText, color: colors.secondaryFontColor }}
+                            secureTextEntry={!showPassword}
                         />
-                        {/* <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                             <Icon
                                 name={showPassword ? 'eye' : 'eye-off'}
+                                type="Feather"
                                 color={colors.secondaryFontColor}
-                                size={20}
+                                size={18}
                             />
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Confirm New Password</Text>
+                    <View style={{
+                        ...styles.Password_Input_view, backgroundColor: colors.inputColor,
+                        borderColor: colors.borderColor
+                    }}>
+
+                        <TextInput
+                            value={cnfpassword}
+                            onChangeText={(val) => setCnfPassword(val)}
+                            placeholder='Confirm Password'
+                            placeholderTextColor={colors.secondaryFontColor}
+                            style={{
+                                ...styles.passwordInputcontainer_sty,
+                                color: colors.secondaryFontColor,
+                                backgroundColor: colors.tintText,
+                            }}
+                            secureTextEntry={!CnfshowPassword}
+                        />
+                        <TouchableOpacity onPress={() => setCnfShowPassword(!CnfshowPassword)}>
+                            <Icon
+                                name={CnfshowPassword ? 'eye' : 'eye-off'}
+                                type="Feather"
+                                color={colors.secondaryFontColor}
+                                size={18}
+                            />
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.check_view}>
                         <CheckBox
@@ -225,18 +272,6 @@ const Signup = ({ navigation }) => {
 
                     />
 
-                    {/* <AppButton
-                        textStyle={styles.buttn_txt}
-                        style={styles.button_sty}
-                        title="Next"
-                        gradientStart={{ x: 0.3, y: 1 }}
-                        gradientEnd={{ x: 1, y: 1 }}
-                        gradient={true}
-                        gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-                        onPress={() => NavigationService.navigate('PresonalInfo')}
-
-                    /> */}
-
                     <TouchableOpacity onPress={() => NavigationService.navigate('Login')}>
                         <Text style={{ ...styles.bottom_txt, color: colors.secondaryFontColor }}>Don’t have an account?
                             <Text style={styles.signup_txt}> Sign In</Text></Text>
@@ -269,15 +304,15 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(12),
         fontFamily: FONTS.Inter.semibold,
     },
-    password_sty: {
-        height: moderateScale(45),
-        width: moderateScale(250),
-        borderWidth: 0,
-        alignSelf: 'center',
-        marginTop: moderateScale(-1),
-        fontFamily: FONTS.Inter.medium,
-        fontSize: moderateScale(12)
-    },
+    // password_sty: {
+    //     height: moderateScale(45),
+    //     width: moderateScale(250),
+    //     borderWidth: 0,
+    //     alignSelf: 'center',
+    //     marginTop: moderateScale(-1),
+    //     fontFamily: FONTS.Inter.medium,
+    //     fontSize: moderateScale(12)
+    // },
     passwordinput_view: {
         height: moderateScale(45),
         borderRadius: moderateScale(7),
@@ -336,7 +371,26 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.Inter.semibold,
         fontSize: moderateScale(13),
         color: 'rgba(2,142,0,255)'
-    }
+    },
+    passwordInputcontainer_sty: {
+        alignSelf: 'center',
+        height: moderateScale(45),
+        fontFamily: FONTS.Inter.regular,
+        fontSize: moderateScale(12),
+        width: moderateScale(245),
+        borderRadius: moderateScale(10),
+    },
+    Password_Input_view: {
+        height: moderateScale(45),
+        width: width - moderateScale(60),
+        flexDirection: 'row',
+        alignItems: 'center',
+        // marginHorizontal: moderateScale(15),
+        paddingHorizontal: moderateScale(10),
+        borderRadius: moderateScale(7),
+        marginTop: moderateScale(7),
+        borderWidth: 1,
+    },
 });
 
 //make this component available to the app

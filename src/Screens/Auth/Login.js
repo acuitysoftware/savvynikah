@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { AppButton, AppTextInput, Card, CheckBox, Icon, useTheme } from 'react-native-basic-elements';
 import Header from '../../Components/Header/Header';
 import { Image } from 'react-native';
@@ -14,22 +14,40 @@ import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const { height, width } = Dimensions.get('screen');
 // create a component
 const Login = ({ navigation }) => {
     const colors = useTheme()
     const [email, setEmail] = useState('')
     const [btnLoader, setBtnLoader] = useState(false);
+    const [check, setCheck] = useState(false);
+    const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
 
-    
     const loginUser = () => {
+        let hasError = false;
         if (email.trim() === '') {
             Toast.show('Please enter Your Email');
             return;
         }
+        if (password === '') {
+            Toast.show('Please enter Password');
+            hasError = true;
+            return false
+        } else if (password.length < 6) {
+            Toast.show('Password must be at least 6 characters');
+            hasError = true;
+            return false
+        }
+        if (!check) {
+            Toast.show('Please Click Check Box');
+            hasError = true;
+        }
+
+        if (hasError) return false;
+
 
         setBtnLoader(true);
-        
-        // Check if the user exists in Firestore
         firestore()
             .collection('Users')
             .where("phone", "==", email)
@@ -40,16 +58,18 @@ const Login = ({ navigation }) => {
                     setBtnLoader(false);
                     return;
                 }
-    
+
                 const userData = querySnapshot.docs[0].data();
                 console.log('User found in Firebase:', JSON.stringify(userData));
-    
+
                 // Call the AuthService to proceed with login
-                const data = { "phone": email };
+                const data = { "phone": email, "password": password };
                 console.log('Login data:', data);
-    
+
                 AuthService.getlogin(data)
                     .then((res) => {
+                        console.log('logggggggggggggggggggggggressssssssssssssssssss',res);
+                        
                         setBtnLoader(false);
                         if (res && res.status === true) {
                             Toast.show('An OTP has been sent to your verified email address.');
@@ -71,10 +91,8 @@ const Login = ({ navigation }) => {
             });
     };
 
-//     const gotoNext =(name,phone,userId)=>{
-// AsyncStorage
-//     }
-    
+
+
 
     return (
         <View style={styles.container}>
@@ -94,23 +112,47 @@ const Login = ({ navigation }) => {
                             maxLength={10}
                         />
                     </View>
-
-                    {/* <View style={{ ...styles.bottom_view }}>
-                    <View style={styles.check_view}>
-                        <CheckBox
-                            checked={check}
-                            onChange={(val) => setCheck(val)}
-                            size={18}
-                            tintColor={colors.second_txt}
-                            activeColor={'#fff'}
-                            containerStyle={{ borderWidth: 1, borderColor: '#999' }}
+                    <Text style={{ ...styles.input_title, color: colors.light_txt }}>Password</Text>
+                    <View style={{
+                        ...styles.PasswordInput_view, backgroundColor: colors.inputColor,
+                        borderColor: colors.borderColor
+                    }}>
+                        <TextInput
+                            value={password}
+                            onChangeText={(val) => setPassword(val)}
+                            placeholder='Password'
+                            placeholderTextColor={colors.secondaryFontColor}
+                            style={{ ...styles.passwordInputcontainer_sty, backgroundColor: colors.tintText, color: colors.secondaryFontColor }}
+                            secureTextEntry={!showPassword}
                         />
-                        <Text style={{ ...styles.rerember_txt, color: colors.secondaryFontColor }}>I Accept the Teems & Conditions</Text>
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <Icon
+                                name={showPassword ? 'eye' : 'eye-off'}
+                                type="Feather"
+                                color={colors.secondaryFontColor}
+                                size={18}
+                            />
+                        </TouchableOpacity>
                     </View>
-                </View> */}
-                    <Text 
-                    onPress={()=>NavigationService.navigate('ForgotEmail')}
-                    style={{ ...styles.forgotpassward_txt, color: colors.secondaryFontColor }}>Forgot Password?</Text>
+
+                    <View style={{ ...styles.bottom_view }}>
+                        <View style={styles.check_view}>
+                            <CheckBox
+                                checked={check}
+                                onChange={(val) => setCheck(val)}
+                                size={18}
+                                // tintColor={colors.second_txt}
+                                tintColor={'red'}
+                                activeColor={'#fff'}
+                                containerStyle={{ borderWidth: 1, borderColor: '#999' }}
+                            />
+                            <Text style={{ ...styles.rerember_txt, color: colors.secondaryFontColor }}>Remember </Text>
+                        </View>
+                        <Text
+                            onPress={() => NavigationService.navigate('ForgotEmail')}
+                            style={{ ...styles.forgotpassward_txt, color: colors.secondaryFontColor }}>Forgot Password?</Text>
+                    </View>
+
                     <AppButton
                         textStyle={styles.buttn_txt}
                         style={styles.button_sty}
@@ -167,8 +209,8 @@ const styles = StyleSheet.create({
     forgotpassward_txt: {
         fontSize: moderateScale(12),
         fontFamily: FONTS.Inter.semibold,
-        textAlign: 'right',
-        marginTop: moderateScale(7)
+        // textAlign: 'right',
+        // marginTop: moderateScale(7)
     },
     phoneinput_view: {
         height: moderateScale(45),
@@ -199,7 +241,8 @@ const styles = StyleSheet.create({
     bottom_view: {
         flexDirection: 'row',
         marginTop: moderateScale(10),
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        // borderWidth: 1
     },
     check_view: {
         flexDirection: 'row',
@@ -232,7 +275,27 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.Inter.semibold,
         fontSize: moderateScale(13),
         color: 'rgba(2,142,0,255)'
-    }
+    },
+    passwordInputcontainer_sty: {
+        alignSelf: 'center',
+        height: moderateScale(45),
+        fontFamily: FONTS.Inter.regular,
+        fontSize: moderateScale(12),
+        width: moderateScale(245),
+        borderRadius: moderateScale(10),
+    },
+    PasswordInput_view: {
+        height: moderateScale(45),
+        width: width - moderateScale(60),
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'red',
+        // marginHorizontal: moderateScale(15),
+        paddingHorizontal: moderateScale(10),
+        borderRadius: moderateScale(7),
+        marginTop: moderateScale(7),
+        borderWidth: 1,
+    },
 });
 
 //make this component available to the app

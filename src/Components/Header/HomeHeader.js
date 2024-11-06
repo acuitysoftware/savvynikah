@@ -29,7 +29,7 @@ const HomeHeader = ({ route }) => {
             case 'Setting':
                 return 'Settings';
             case 'MySubscription':
-                return 'Subscription';
+                return 'My Subscription';
             case 'MyChat':
                 return 'Chat List';
             case 'MyWishlist':

@@ -11,6 +11,8 @@ import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
 import { useSelector } from 'react-redux';
 import NavigationService from '../../Services/Navigation';
+import Modal from "react-native-modal";
+import PaymentSucess from '../../Components/DrawerCard/PaymentSucess';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -24,6 +26,10 @@ const GetPremium = () => {
 
     const [loading, setLoading] = useState(true);
     const [btnLoader, setBtnLoader] = useState(false);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
     const handlePlanSelect = (index) => {
         setSelectedPlan(index);
@@ -98,9 +104,15 @@ const GetPremium = () => {
             .then((res) => {
                 console.log('paymentttttttttttttttttttttttttttttttttttt', res);
                 if (res && res.status == true) {
-                    setBtnLoader(false)
-                    Toast.show(res.message);
-                    NavigationService.navigate('Home')
+                    // setBtnLoader(false)
+                    // Toast.show(res.message);
+                    // NavigationService.navigate('Home')
+                    setModalVisible(true);
+                    setTimeout(() => {
+                        setModalVisible(false);
+                        NavigationService.navigate('Home')
+                    }, 3000);
+                    setBtnLoader(false);
                 } else {
                     setBtnLoader(false)
                     Toast.show(res.message);
@@ -166,6 +178,19 @@ const GetPremium = () => {
                     By Placing this order, you agree to the Terms of Service and Privacy Policy. Subscription Automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.
                 </Text>
             </ScrollView>
+            <Modal
+                isVisible={isModalVisible}
+                // backdropOpacity={1}
+                style={{
+                    margin: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <View style={styles.modalView}>
+                    <PaymentSucess />
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -214,7 +239,14 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.Inter.regular,
         fontSize: moderateScale(11),
         marginBottom: moderateScale(15)
-    }
+    },
+    modalView: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
 
 export default GetPremium;

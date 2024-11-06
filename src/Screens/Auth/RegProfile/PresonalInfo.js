@@ -532,7 +532,7 @@ const PresonalInfo = ({ navigation }) => {
               </View>
             </View>
           </View>
-          <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Maslak</Text>
+          <Text style={{ ...styles.input_title, marginTop: moderateScale(10), color: colors.secondaryFontColor }}>Maslak (Optional)</Text>
           <SingleSelectPicker
             data={maslakData}
             placeholder="Select Maslak"

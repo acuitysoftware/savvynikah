@@ -33,12 +33,12 @@ const DrawerCard = () => {
         },
         {
             img: require('../../assets/images/seeting.png'),
-            title: 'Setting',
+            title: 'Settings',
             handleClick: 'Setting'
         },
         {
             img: require('../../assets/images/subscription.png'),
-            title: 'My Subcription',
+            title: 'My Subscription',
             handleClick: 'MySubscription'
         },
         {

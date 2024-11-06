@@ -62,7 +62,7 @@ const Home = () => {
 
         HomeService.getuserListNdFilterData(data)
             .then((res) => {
-                // console.log('gettttttttttttttttttttttttttttttttttttttttttttttt0000000000000000000000000ttttt',JSON.stringify(res));
+                console.log('gettttttttttttttttttttttttttttttttttttttttttttttt0000000000000000000000000ttttt',JSON.stringify(res));
                 if (res && res.success == true) {
                     setProfileListData(res.data)
                 } 
@@ -114,9 +114,6 @@ const Home = () => {
                                                     <ProfileListCard item={item} index={index} />
                                                 ))}
                                             </ScrollView>
-                                      
-
-                                       <Text style={{color:'red'}}>jsssssssssssssssssssssss</Text>
                                         </View>
                                         :
                                         <View style={styles.noDataView}>

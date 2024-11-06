@@ -274,7 +274,7 @@ const ProfessionalInfo = ({ navigation }) => {
           />
 
 
-          <Text style={{ ...styles.input_title, marginTop: 10, color: colors.secondaryFontColor }}>Ocupation</Text>
+          <Text style={{ ...styles.input_title, marginTop: 10, color: colors.secondaryFontColor }}>Occupation</Text>
           {Ocupationdata && Ocupationdata.length > 0 ? (
             <SingleSelectPicker
               data={Ocupationdata}

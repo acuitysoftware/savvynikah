@@ -6,6 +6,9 @@ import { useTheme } from 'react-native-basic-elements';
 
 const { height, width } = Dimensions.get('screen');
 const PresonalInfoCard = ({ userProfileData }) => {
+
+    console.log('userrrrrrrrrrrrrrrrrrr00000000000000000000000000rrrrrrrrrrrrrrr',userProfileData);
+    
     const colors = useTheme();
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -83,6 +86,17 @@ const PresonalInfoCard = ({ userProfileData }) => {
                 <Text style={{ ...styles.name_txt, color: colors.light_txt }}>DOB</Text>
                 <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{DateofBirth}</Text>
             </View>
+
+            <Text style={{
+                ...styles.Presonal_txt,
+                marginTop: moderateScale(10),
+                color: colors.secondaryFontColor
+            }}>Habbits</Text>
+             <View style={styles.name_view}>
+                <Text style={{ ...styles.name_txt, color: colors.light_txt }}>{userProfileData?.habits}</Text>
+                {/* <Text style={{ ...styles.username_txt, color: colors.secondaryFontColor }}>{DateofBirth}</Text> */}
+            </View>
+
         </View>
     );
 };

@@ -16,7 +16,7 @@ import NavigationService from '../../../Services/Navigation';
 const { height, width } = Dimensions.get('screen');
 
 const ViewProfile = () => {
-    const [selectScreen, setSelectScreen] = useState('PresonalInfo');
+    const [selectScreen, setSelectScreen] = useState('Presonal Info');
     const colors = useTheme();
     const route = useRoute()
     const profileid = route.params.userId;
@@ -31,11 +31,11 @@ const ViewProfile = () => {
     };
     const renderContentScreen = () => {
         switch (selectScreen) {
-            case 'PresonalInfo':
+            case 'Presonal Info':
                 return <PresonalInfoCard userProfileData={userProfileData} />;
             case 'Preferences':
                 return <PreferencesCard userProfileData={userProfileData} />;
-            case 'ProfessionalInfo':
+            case 'Professional Info':
                 return <ProfessionalInfoCard userProfileData={userProfileData} />;
             default:
                 return null;
@@ -57,7 +57,7 @@ const ViewProfile = () => {
         setLoading(true);
         HomeService.getuserFullData(data)
             .then((res) => {
-                console.log('Response from getuserFullData:===============================', JSON.stringify(res));
+                console.log('Response from getuserFullData:===============================77777777777777777777=========ggggggggggggg===========', JSON.stringify(res));
                 if (res && res.success === true) {
                     if (res.data) {
                         setUserProfileData(res.data);
@@ -98,7 +98,7 @@ const ViewProfile = () => {
                         {
                             userProfileData?.profile_images?.length === 1 ?
                                 <View style={{ height: height / 2.7 }}>
-                                    <Image source={{ uri: userProfileData?.profile_images?.url }} style={styles.bannerImg} />
+                                    <Image source={{ uri: userProfileData?.profile_images[0]?.url }} style={styles.bannerImg} />
                                 </View>
                                 :
                                 <SwiperFlatList
@@ -124,7 +124,7 @@ const ViewProfile = () => {
 
                     </View>
                     <View style={[styles.tabView, { backgroundColor: colors.shadowColor }]}>
-                        {['PresonalInfo', 'Preferences', 'ProfessionalInfo'].map((screen) => (
+                        {['Presonal Info', 'Preferences', 'Professional Info'].map((screen) => (
                             <Pressable
                                 key={screen}
                                 style={[
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginHorizontal: moderateScale(10),
         marginTop: moderateScale(15),
-        padding: moderateScale(3),
+        // padding: moderateScale(3),
         borderRadius: moderateScale(20),
         justifyContent: 'space-between',
         marginBottom: moderateScale(15)

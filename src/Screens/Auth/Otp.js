@@ -47,9 +47,21 @@ const Otp = ({ navigation }) => {
         }, 1000);
     };
 
+    // const resendOtp = () => {
+    //     let data = { "phone": emailID };
+    //     AuthService.getlogin(data)
+    //         .then((res) => {
+    //             Toast.show('OTP resent successfully!');
+    //             startTimer();
+    //         })
+    //         .catch((err) => {
+    //             Toast.show('Error in resending OTP!');
+    //         });
+    // };
+
     const resendOtp = () => {
-        let data = { "phone": emailID };
-        AuthService.getlogin(data)
+        let data = { "phone":  emailID };
+        AuthService.getVerifyResendOTP(data)
             .then((res) => {
                 Toast.show('OTP resent successfully!');
                 startTimer();
@@ -100,7 +112,7 @@ const Otp = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Header title='OTP-Verify' />
-            <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter the Code sent to your Email Id</Text>
+            <Text style={{ ...styles.title_txt, color: colors.secondaryFontColor }}>Enter the Code sent to your Phone Number</Text>
             <Text style={{ ...styles.otp_txt, color: colors.second_txt }}>We've send the OTP to {emailID}</Text>
             <View style={{ marginHorizontal: moderateScale(15), marginTop: moderateScale(15) }}>
                 <OTPTextInput

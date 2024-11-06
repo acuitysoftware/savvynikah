@@ -12,29 +12,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const WishlistCard = ({ item, index }) => {
   const colors = useTheme();
 
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isInWishlist, setIsInWishlist] = useState();
 
+  // useEffect(() => {
+  //   setIsInWishlist(item.flag === 1);
+  // }, [item.flag]);
+  
 
   // const toggleWishList = () => {
   //   const data = { "user_id": item.id };
-
+  
   //   if (isInWishlist) {
   //     HomeService.getRemoveWislit(data)
   //       .then((res) => {
-  //         console.log('Removed from wishlist9999999999999999', res);
-  //         setIsInWishlist(false);
+  //         console.log('Removed from wishlist', res);
+  //         setIsInWishlist(false); // Update to false after removal
   //       })
   //       .catch((err) => {
-  //         console.log('Error removing from wishlist-----------------', err);
+  //         console.log('Error removing from wishlist', err);
   //       });
   //   } else {
   //     HomeService.getAddWislit(data)
   //       .then((res) => {
-  //         console.log('Added to wishlist=======', res);
-  //         setIsInWishlist(true);
+  //         console.log('Added to wishlist', res);
+  //         setIsInWishlist(true); // Update to true after addition
   //       })
   //       .catch((err) => {
-  //         console.log('Error adding to wishlist>>>>>>>>>>', err);
+  //         console.log('Error adding to wishlist', err);
   //       });
   //   }
   // };
@@ -95,7 +99,7 @@ const WishlistCard = ({ item, index }) => {
       }}>
        
        <Icon
-          name={isInWishlist ? 'heart' : 'hearto'} 
+         name={isInWishlist ? 'heart' : 'hearto'}
           type='AntDesign'
           color={'red'}
           size={12}

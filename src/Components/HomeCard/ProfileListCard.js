@@ -10,79 +10,83 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileListCard = ({ item, index }) => {
   // console.log('singggggggggggggggggggggggggggggggggggggggggggggprofileeeeeeeeeeeeee',item);
-
-  const [isInWishlist, setIsInWishlist] = useState(false);
   const colors = useTheme();
-
-  // const toggleWishList = () => {
-  //   const data = { "user_id": item.id };
-
-  //   if (isInWishlist) {
-  //     HomeService.getRemoveWislit(data)
-  //       .then((res) => {
-  //         console.log('Removed from wishlist9999999999999999', res);
-  //         setIsInWishlist(false);
-  //       })
-  //       .catch((err) => {
-  //         console.log('Error removing from wishlist-----------------', err);
-  //       });
-  //   } else {
-  //     HomeService.getAddWislit(data)
-  //       .then((res) => {
-  //         console.log('Added to wishlist=======', res);
-  //         setIsInWishlist(true);
-  //       })
-  //       .catch((err) => {
-  //         console.log('Error adding to wishlist>>>>>>>>>>', err);
-  //       });
-  //   }
-  // };
+  const [isInWishlist, setIsInWishlist] = useState(item.flag === 1);
 
   useEffect(() => {
-    const checkWishlistStatus = async () => {
-      try {
-        const wishlist = await AsyncStorage.getItem('wishlist');
-        const parsedWishlist = JSON.parse(wishlist) || [];
-        setIsInWishlist(parsedWishlist.includes(item.id)); 
-      } catch (error) {
-        console.log('Error fetching wishlist status:', error);
-      }
-    };
+    setIsInWishlist(item.flag === 1);
+  }, [item.flag]);
+  
 
-    checkWishlistStatus();
-  }, [item.id]);
-
-  const toggleWishList = async () => {
+  const toggleWishList = () => {
     const data = { "user_id": item.id };
-
-    try {
-      if (isInWishlist) {
-        // Remove from wishlist
-        await HomeService.getRemoveWislit(data);
-        console.log('Removed from wishlist');
-        setIsInWishlist(false);
-        
-        // Update wishlist in AsyncStorage
-        const wishlist = await AsyncStorage.getItem('wishlist');
-        const parsedWishlist = JSON.parse(wishlist) || [];
-        const updatedWishlist = parsedWishlist.filter(id => id !== item.id);
-        await AsyncStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
-
-      } else {
-        // Add to wishlist
-        await HomeService.getAddWislit(data);
-        console.log('Added to wishlist');
-        setIsInWishlist(true);
-
-        // Update wishlist in AsyncStorage
-        const wishlist = await AsyncStorage.getItem('wishlist');
-        const parsedWishlist = JSON.parse(wishlist) || [];
-        await AsyncStorage.setItem('wishlist', JSON.stringify([...parsedWishlist, item.id]));
-      }
-    } catch (error) {
-      console.log('Error toggling wishlist:', error);
+  
+    if (isInWishlist) {
+      HomeService.getRemoveWislit(data)
+        .then((res) => {
+          console.log('Removed from wishlist', res);
+          setIsInWishlist(false); // Update to false after removal
+        })
+        .catch((err) => {
+          console.log('Error removing from wishlist', err);
+        });
+    } else {
+      HomeService.getAddWislit(data)
+        .then((res) => {
+          console.log('Added to wishlist', res);
+          setIsInWishlist(true); // Update to true after addition
+        })
+        .catch((err) => {
+          console.log('Error adding to wishlist', err);
+        });
     }
   };
+
+  // useEffect(() => {
+  //   const checkWishlistStatus = async () => {
+  //     try {
+  //       const wishlist = await AsyncStorage.getItem('wishlist');
+  //       const parsedWishlist = JSON.parse(wishlist) || [];
+  //       setIsInWishlist(parsedWishlist.includes(item.id)); 
+  //     } catch (error) {
+  //       console.log('Error fetching wishlist status:', error);
+  //     }
+  //   };
+
+  //   checkWishlistStatus();
+  // }, [item.id]);
+
+  // const toggleWishList = async () => {
+  //   const data = { "user_id": item.id };
+
+  //   try {
+  //     if (isInWishlist) {
+  //       // Remove from wishlist
+  //       await HomeService.getRemoveWislit(data);
+  //       console.log('Removed from wishlist');
+  //       setIsInWishlist(false);
+        
+  //       // Update wishlist in AsyncStorage
+  //       const wishlist = await AsyncStorage.getItem('wishlist');
+  //       const parsedWishlist = JSON.parse(wishlist) || [];
+  //       const updatedWishlist = parsedWishlist.filter(id => id !== item.id);
+  //       await AsyncStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+
+  //     } else {
+  //       // Add to wishlist
+  //       await HomeService.getAddWislit(data);
+  //       console.log('Added to wishlist');
+  //       setIsInWishlist(true);
+
+  //       // Update wishlist in AsyncStorage
+  //       const wishlist = await AsyncStorage.getItem('wishlist');
+  //       const parsedWishlist = JSON.parse(wishlist) || [];
+  //       await AsyncStorage.setItem('wishlist', JSON.stringify([...parsedWishlist, item.id]));
+  //     }
+  //   } catch (error) {
+  //     console.log('Error toggling wishlist:', error);
+  //   }
+  // };
   return (
     <View key={index} style={{ ...styles.container, backgroundColor: colors.primaryFontColor }}>
       <View style={{
@@ -90,7 +94,7 @@ const ProfileListCard = ({ item, index }) => {
         right: moderateScale(8),
         top: moderateScale(7)
       }}>
-
+{}
         <Icon
           name={isInWishlist ? 'heart' : 'hearto'} 
           type='AntDesign'
