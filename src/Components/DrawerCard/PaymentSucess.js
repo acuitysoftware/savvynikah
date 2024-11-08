@@ -22,7 +22,7 @@ const  PaymentSucess= ({paymentData}) => {
                 <Text style={{...styles.sucess_txt,color:colors.secondaryFontColor}}>Payment Succcessfull</Text>
                 <Text style={{...styles.transaction_txt,color:colors.secondaryFontColor}}>Transaction Number : {paymentData?.transaction_id}</Text>
                 <View style={styles.line} />
-                <Text style={{...styles.amount_txt,color:colors.secondaryFontColor}}>Amount Paid : <Text style={{color:colors.text_color}}>₹20.00</Text></Text>
+                <Text style={{...styles.amount_txt,color:colors.secondaryFontColor}}>Amount Paid : <Text style={{color:colors.text_color}}>₹{paymentData.price}</Text></Text>
                 <Text style={{...styles.amount_txt,marginTop:moderateScale(5),color:colors.secondaryFontColor}}>Payed By <Text style={{color:colors.text_color}}>phonepe</Text></Text>
                 </View>
         </View>
