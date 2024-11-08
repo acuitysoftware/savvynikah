@@ -336,7 +336,7 @@ const ProfessionalInfo = ({ navigation }) => {
           <View style={{ ...styles.inputbox_view, marginBottom: moderateScale(30), marginTop: moderateScale(30) }}>
 
             <Pressable
-              onPress={() => NavigationService.navigate('PresonalInfo')}
+               onPress={() => NavigationService.goBack()}
               style={{ ...styles.Previousbutton_sty, borderColor: colors.buttonColor }}>
               <Text style={{ ...styles.buttn_txt, color: colors.buttonColor }}>Previous</Text>
             </Pressable>

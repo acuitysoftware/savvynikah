@@ -61,6 +61,7 @@ react {
  */
 def enableProguardInReleaseBuilds = false
 
+
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
@@ -79,6 +80,14 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
+     externalNativeBuild {
+        cmake {
+            version "3.18.1" 
+        }
+    }
+
+    
+
     namespace "com.savvynikah"
     defaultConfig {
         applicationId "com.savvynikah"
@@ -86,6 +95,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+         ndk {
+           abiFilters "armeabi-v7a", "x86", "x86_64"
+        }
     }
     signingConfigs {
         debug {
@@ -116,12 +128,14 @@ allprojects {
 }
 
 dependencies {
-   implementation("com.facebook.react:react-android")
+    implementation("com.facebook.react:react-android")
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-database'
+    implementation 'phonepe.intentsdk.android.release:IntentSDK:2.4.3'
+
     
 
     if (hermesEnabled.toBoolean()) {

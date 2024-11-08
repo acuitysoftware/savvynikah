@@ -6,33 +6,41 @@ import { FONTS } from '../../Constants/Fonts';
 import SubscriptionCard from '../../Components/DrawerCard/SubscriptionCard';
 import { useNavigation } from '@react-navigation/native';
 import HomeService from '../../Services/HomeServises';
-import RazorpayCheckout from 'react-native-razorpay';
 import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
 import { useSelector } from 'react-redux';
 import NavigationService from '../../Services/Navigation';
 import Modal from "react-native-modal";
 import PaymentSucess from '../../Components/DrawerCard/PaymentSucess';
+import PhonePePaymentSDK from 'react-native-phonepe-pg'
+import sha256 from 'sha256'
+import Base64 from 'react-native-base64'
 
 const { height, width } = Dimensions.get('screen');
 
 const GetPremium = () => {
     const { userData } = useSelector(state => state.User)
+    console.log('hgggggggggggggggggggg', userData);
     const colors = useTheme();
     const navigation = useNavigation();
     const [selectedPlan, setSelectedPlan] = useState(null);
     console.log('hgggggggggggggggggggg', selectedPlan);
     const [subPlanList, setSubPlanList] = useState([])
+    const [paymentData, setPaymentData] = useState({})
+    const [price, setprice] = useState('');
 
     const [loading, setLoading] = useState(true);
     const [btnLoader, setBtnLoader] = useState(false);
-    const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalShow, setModalShow] = useState(false);
     const toggleModal = () => {
-        setModalVisible(!isModalVisible);
+        setModalShow(!isModalShow);
     };
 
     const handlePlanSelect = (index) => {
+        console.log('gggggggggggggggggggpriceeeeeeeeeeeeeee', index);
+
         setSelectedPlan(index);
+        setprice(index.price)
     };
 
     useEffect(() => {
@@ -56,73 +64,117 @@ const GetPremium = () => {
             });
     };
 
-    // const Setpayment = () => {
-    //     var options = {
-    //         description: 'Credits towards consultation',
-    //         image: '../../assets/images/paymentlog.png',
-    //         currency: 'INR',
-    //         key: 'rzp_test_BTKOTgmenSECJo',
-    //         amount: Number(selectedPlan.price) * 100,
-    //         name: 'SavvyNikah',
-    //         order_id: '',
-    //         prefill: {
-    //             email: userData?.email,
-    //             contact: userData?.phone,
-    //             name:  userData?.full_name
-    //         },
-    //         theme: { color: 'rgba(30,68,28,255)' }
-    //     }
-    //     RazorpayCheckout.open(options).then((data) => {
-    //         console.log('paymentIDDDDD-------------------------', data.razorpay_payment_id);
-    //         let uuidCustom = uuid.v4();
-    //         let traRef = uuidCustom.split('-');
-    //         let Paymentdata = {
-    //             "subscription_id": "2",
-    //             "transaction_id": `${traRef[0]}-${traRef[1]}-${traRef[2]}`,
-    //             "order_id": "jhfdfjffjk"
-    //         }
-    //         console.log('data1--------------===================', Paymentdata);
-    //         if (data.razorpay_payment_id) {
-    //             HomeService.getSubscriptionPayment(Paymentdata).then((res) => {
-    //                 console.log('res------------------', res);
-    //                 // Toast.show('Price Update Success')
-    //                 // NavigationService.back()
-    //             })
-    //         }
-    //     }).catch((error) => {
-    //         // alert(`Error: ${error.code} | ${error.description}`);
-    //     });
-    // }
-    const submitPayment = (() => {
+    const [environment, setEnviroment] = useState("SANDBOX")
+    const [merchantId, setMerchantId] = useState('PGTESTPAYUAT105')
+    const [appId, setAppId] = useState(null)
+    const [enableLogging, setEnableLogging] = useState(true)
+
+    const generateTransactionId = () => {
+        const timestamp = Date.now();
+        const random = Math.floor(Math.random() * 1000000);
+        const merchantPrefix = "T";
+        return `${merchantPrefix}${timestamp}${random}`
+    }
+
+    // UAT Credentials
+    // MID: PGTESTPAYUAT105
+    // Test card details:
+    // Netbanking Credentials
+    // "card_number": "4208 5851 9011 6667", Username: test
+    // Salt Index: 1
+    // Salt Key: c45b52fe-f2c5-4ef6-a6b5-131aa89ed133 "card_type": "CREDIT_CARD",
+    // "card_issuer": "VISA",
+    // "expiry_month": 06,
+    // "expiry_year": 2027,
+    // "cvv": "508"
+    // Bank Page OTP: 123456
+    // Password: test
+
+
+
+    const SubmitHandler = () => {
+        PhonePePaymentSDK.init(environment, merchantId, appId, enableLogging)
+            .then((res) => {
+                const requestBody = {
+                    merchantId: merchantId,
+                    merchantTransactionId: generateTransactionId(),
+                    merchantUserId: "",
+                    amount: (price * 100),
+                    mobileNumber: userData?.phone,
+                    callbackUrl: "",
+                    paymentInstrument: {
+                        type: "PAY_PAGE"
+                    }
+                };
+
+                const salt_key = "c45b52fe-f2c5-4ef6-a6b5-131aa89ed133";
+                const salt_Index = 1;
+                const payload = JSON.stringify(requestBody);
+                const payload_main = Base64.encode(payload);
+                const string = payload_main + "/pg/v1/pay" + salt_key;
+                const checksum = sha256(string) + "###" + salt_Index;
+
+                PhonePePaymentSDK.startTransaction(payload_main, checksum, null, null)
+                    .then((paymentRes) => {
+                        console.log('Payment Response:===================================', paymentRes);
+                        // Only call submitPayment if payment is successful
+                        // {"status": "SUCCESS"}
+                        if (paymentRes.status === "SUCCESS") {
+                            // Generate unique UUID
+                            const uniquePaymentId = uuid.v4();
+                            console.log('Generated UUID================================:', uniquePaymentId);
+                            // Pass the UUID to submitPayment
+                            submitPayment(uniquePaymentId);
+                        } else {
+                            // Handle failure case
+                            console.log('Payment failed or status is not SUCCESS', paymentRes.status);
+                            Toast.show('Server Error. Please try again Later.', Toast.BOTTOM);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log('Payment error', err);
+                        Toast.show('An error occurred during payment. Please try again.', Toast.BOTTOM);
+                    });
+            })
+            .catch((err) => {
+                console.log('PhonePe SDK init error', err);
+            });
+    };
+
+    const submitPayment = ((uniquePaymentId) => {
         let data = {
             "subscription_id": selectedPlan?.id,
-            "transaction_id": "pay_Ln3KD7pHzx4hI3",
-            "order_id": "08676AGHJKKLLKH656"
+            "transaction_id": generateTransactionId(),
+            "order_id": uniquePaymentId
         }
-        setBtnLoader(true)
+        // setBtnLoader(true)
+        console.log('submittttttttttttttttttttttttttt=======================', data);
+
         HomeService.getSubmitPayment(data)
             .then((res) => {
-                console.log('paymentttttttttttttttttttttttttttttttttttt', res);
+                console.log('paymentttttttttttttttttttttttttttttttttttt====================', res);
                 if (res && res.status == true) {
                     // setBtnLoader(false)
                     // Toast.show(res.message);
                     // NavigationService.navigate('Home')
-                    setModalVisible(true);
+                    setModalShow(true);
+                    setPaymentData(res.data)
                     setTimeout(() => {
-                        setModalVisible(false);
+                        setModalShow(false);
                         NavigationService.navigate('Home')
                     }, 3000);
                     setBtnLoader(false);
                 } else {
                     setBtnLoader(false)
                     Toast.show(res.message);
-                }   
+                }
             })
             .catch((err) => {
                 console.log('paymenterr', err);
                 setBtnLoader(false)
             })
     })
+
 
 
 
@@ -162,7 +214,7 @@ const GetPremium = () => {
                     gradientEnd={{ x: 1, y: 1 }}
                     gradient={true}
                     gradientColors={['rgba(30,68,28,255)', 'rgba(2,142,0,255)']}
-                    onPress={() => submitPayment()}
+                    onPress={() => SubmitHandler()}
                     loader={
                         btnLoader
                             ? {
@@ -179,8 +231,7 @@ const GetPremium = () => {
                 </Text>
             </ScrollView>
             <Modal
-                isVisible={isModalVisible}
-                // backdropOpacity={1}
+                isVisible={isModalShow}
                 style={{
                     margin: 0,
                     justifyContent: 'center',
@@ -188,7 +239,7 @@ const GetPremium = () => {
                 }}
             >
                 <View style={styles.modalView}>
-                    <PaymentSucess />
+                    <PaymentSucess paymentData={paymentData} />
                 </View>
             </Modal>
         </View>

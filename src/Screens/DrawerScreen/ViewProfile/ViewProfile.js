@@ -162,7 +162,9 @@ const ViewProfile = () => {
                     <Text style={{ ...styles.subcs_txt, color: colors.second_txt }}>You have Purchase a subscription plan to view the profile.</Text>
 
                     <TouchableOpacity
-                        onPress={() => NavigationService.navigate('GetPremium')}
+                        onPress={() =>{
+                            NavigationService.navigate('GetPremium'),setModalVisible(false)
+                        }}
                         style={{ ...styles.save_btn, backgroundColor: colors.buttonColor }}>
                         <Text style={{ ...styles.canclebtn_txt, color: colors.primaryFontColor }}>OK</Text>
                     </TouchableOpacity>

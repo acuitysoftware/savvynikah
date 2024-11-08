@@ -101,7 +101,7 @@ const ForgotOTP = ({ navigation }) => {
                 <AppButton
                     textStyle={styles.buttn_txt}
                     style={styles.button_sty}
-                    title="Cntinue"
+                    title="Continue"
                     gradientStart={{ x: 0.3, y: 1 }}
                     gradientEnd={{ x: 1, y: 1 }}
                     gradient={true}
@@ -122,7 +122,7 @@ const ForgotOTP = ({ navigation }) => {
                 <AppButton
                     textStyle={styles.buttn_txt}
                     style={{ ...styles.button_sty, backgroundColor: 'gray' }}
-                    title="Cntinue"
+                    title="Continue"
 
                 />
             )}

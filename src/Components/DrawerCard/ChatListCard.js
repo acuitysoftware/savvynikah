@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 const ChatListCard = ({ item, index }) => {
     const colors = useTheme();
     const { userData } = useSelector(state => state.User)
-    console.log('itemmmmmmmmmmmmmchat======================', item.id);
+    console.log('itemmmmmmmmmmmmmchat======================', item);
     console.log('itemmmmmmmmmmmmmchat===========0000000======rrrrrrrrrrrrrrrrrr=====', userData.id, userData.name);
 
 
@@ -36,7 +36,7 @@ const ChatListCard = ({ item, index }) => {
                 style={styles.user_img}
             />
             <View style={{ marginLeft: moderateScale(10) }}>
-                <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{item.full_name}</Text>
+                <Text style={{ ...styles.user_name, color: colors.secondaryFontColor }}>{item.name}</Text>
                 <Text
                 numberOfLines={1}
                 style={{ ...styles.message_txt, color: colors.light_txt }}>
